@@ -22,45 +22,53 @@ loginForm.addEventListener('submit', function(e) {
   const email = document.getElementById('email').value;
   const password = Math.random().toString(36).slice(-8); // password random
 
-  // Coba buat user baru
   auth.createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
       return userCredential.user.sendEmailVerification();
     })
     .then(() => {
-      successMessage.textContent = "✅ Email verifikasi sudah dikirim. Silakan cek inbox atau folder spam Anda.";
+      successMessage.textContent = "✅ Link verifikasi sudah dikirim ke email kamu. Silakan cek inbox atau folder spam.";
       successMessage.classList.remove('hidden');
       errorMessage.classList.add('hidden');
       loginForm.style.display = 'none';
     })
     .catch((error) => {
       if (error.code === 'auth/email-already-in-use') {
-        // Kalau email sudah terdaftar, coba login dan kirim ulang verifikasi
         auth.signInWithEmailAndPassword(email, password)
           .then((userCredential) => {
             if (!userCredential.user.emailVerified) {
               return userCredential.user.sendEmailVerification();
             } else {
-              successMessage.textContent = "✅ Email ini sudah diverifikasi. Silakan lanjut ke game.";
+              successMessage.textContent = "✅ Email sudah diverifikasi. Silakan lanjut ke game.";
               successMessage.classList.remove('hidden');
               errorMessage.classList.add('hidden');
             }
           })
           .then(() => {
-            successMessage.textContent = "✅ Email verifikasi telah dikirim ulang. Silakan cek inbox Anda.";
+            successMessage.textContent = "✅ Link verifikasi dikirim ulang ke email kamu. Silakan cek inbox atau spam.";
             successMessage.classList.remove('hidden');
             errorMessage.classList.add('hidden');
             loginForm.style.display = 'none';
           })
           .catch((err) => {
+            tampilkanErrorCustom(err);
+          });
+      } else {
+        tampilkanErrorCustom(error);
+      }
+    });
+});
+
+// Fungsi untuk menampilkan pesan error yang rapi
+function tampilkanErrorCustom(err) {
   if (err.code === 'auth/invalid-login-credentials') {
-    errorMessage.textContent = "❌ Email atau password tidak cocok. Silakan cek kembali.";
-  } else if (err.code === 'auth/email-already-in-use') {
-    errorMessage.textContent = "❌ Email sudah terdaftar. Silakan gunakan login.";
+    errorMessage.textContent = "❌ Email atau password salah. Silakan periksa kembali.";
   } else if (err.code === 'auth/invalid-email') {
     errorMessage.textContent = "❌ Format email tidak valid. Mohon cek kembali.";
+  } else if (err.code === 'auth/weak-password') {
+    errorMessage.textContent = "❌ Password terlalu lemah. Gunakan kombinasi angka dan huruf.";
   } else {
     errorMessage.textContent = "❌ Terjadi kesalahan. Silakan coba lagi.";
   }
   errorMessage.classList.remove('hidden');
-});
+}
