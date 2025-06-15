@@ -1,0 +1,56 @@
+body {
+  font-family: sans-serif;
+  background: #111;
+  color: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  text-align: center;
+}
+
+input {
+  padding: 10px;
+  margin: 10px 0;
+  width: 250px;
+  border-radius: 5px;
+  border: none;
+}
+
+button {
+  background: linear-gradient(to right, #00f0ff, #ff00e6);
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+input[type="email"] {
+  padding: 10px;
+  font-size: 16px;
+  width: 250px;
+  margin-right: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.hidden {
+  display: none;
+}
+
+#successMessage {
+  margin-top: 20px;
+  color: #28a745;
+}
+
+#errorMessage {
+  margin-top: 20px;
+  color: #dc3545;
+}
