@@ -10,6 +10,9 @@
   <img src="LogodasboardLogin.png" alt="Logo Limiter Of Mining" class="logo-bg">
   <div class="login-container dynamic-border">
     <h1>★ Limiter Of Mining ★</h1>
+
+    <input type="email" id="userEmail" placeholder="Masukkan email">
+<button onclick="sendVerification()">Kirim Email Verifikasi</button>
     
     <div class="pickaxe-logo">
   <svg viewBox="0 0 100 100" width="120" height="120">
@@ -113,4 +116,39 @@
   <script src="JavaScript/script.js"></script>
   <script src="JavaScript/ScriptOnlineStatus.js"></script>
 </body>
+  <!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBps3E-x059gTZ9lblJaaC5R3n9wd2-hrY",
+    authDomain: "limiterofmining-69272.firebaseapp.com",
+    projectId: "limiterofmining-69272",
+    storageBucket: "limiterofmining-69272.appspot.com",
+    messagingSenderId: "69089394090",
+    appId: "1:69089394090:web:ee3e3ab8bd806574067fd3",
+    measurementId: "G-CE1BMD0DJD"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  function sendVerification() {
+    const email = document.getElementById("userEmail").value;
+    const password = Math.random().toString(36).slice(-8);
+
+    auth.createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        return userCredential.user.sendEmailVerification();
+      })
+      .then(() => {
+        alert("✅ Email verifikasi sudah dikirim. Silakan cek inbox kamu.");
+      })
+      .catch((error) => {
+        alert(`❌ ${error.message}`);
+      });
+  }
+</script>
+  
 </html>
