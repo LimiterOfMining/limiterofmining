@@ -53,15 +53,14 @@ loginForm.addEventListener('submit', function(e) {
             loginForm.style.display = 'none';
           })
           .catch((err) => {
-            errorMessage.textContent = `❌ Maaf, gagal login: ${err.message}`;
-            errorMessage.classList.remove('hidden');
-          });
-      } else if (error.code === 'auth/invalid-email') {
-        errorMessage.textContent = "❌ Alamat email yang Anda masukkan tidak valid. Silakan periksa kembali.";
-        errorMessage.classList.remove('hidden');
-      } else {
-        errorMessage.textContent = `❌ Terjadi kesalahan: ${error.message}`;
-        errorMessage.classList.remove('hidden');
-      }
-    });
+  if (err.code === 'auth/invalid-login-credentials') {
+    errorMessage.textContent = "❌ Email atau password tidak cocok. Silakan cek kembali.";
+  } else if (err.code === 'auth/email-already-in-use') {
+    errorMessage.textContent = "❌ Email sudah terdaftar. Silakan gunakan login.";
+  } else if (err.code === 'auth/invalid-email') {
+    errorMessage.textContent = "❌ Format email tidak valid. Mohon cek kembali.";
+  } else {
+    errorMessage.textContent = "❌ Terjadi kesalahan. Silakan coba lagi.";
+  }
+  errorMessage.classList.remove('hidden');
 });
