@@ -28,38 +28,39 @@ loginForm.addEventListener('submit', function(e) {
       return userCredential.user.sendEmailVerification();
     })
     .then(() => {
-      successMessage.textContent = "✅ Email verifikasi sudah dikirim. Silakan cek inbox kamu.";
+      successMessage.textContent = "✅ Email verifikasi sudah dikirim. Silakan cek inbox atau folder spam Anda.";
       successMessage.classList.remove('hidden');
       errorMessage.classList.add('hidden');
       loginForm.style.display = 'none';
     })
     .catch((error) => {
       if (error.code === 'auth/email-already-in-use') {
-        // Kalau email sudah dipakai, coba login dan kirim ulang verifikasi
+        // Kalau email sudah terdaftar, coba login dan kirim ulang verifikasi
         auth.signInWithEmailAndPassword(email, password)
           .then((userCredential) => {
             if (!userCredential.user.emailVerified) {
-              return userCredential.user.sendEmailVerification().then(() => {
-                successMessage.textContent = "✅ Email sudah terdaftar, link verifikasi baru sudah dikirim!";
-                successMessage.classList.remove('hidden');
-                errorMessage.classList.add('hidden');
-                loginForm.style.display = 'none';
-              });
+              return userCredential.user.sendEmailVerification();
             } else {
               successMessage.textContent = "✅ Email ini sudah diverifikasi. Silakan lanjut ke game.";
               successMessage.classList.remove('hidden');
               errorMessage.classList.add('hidden');
             }
           })
+          .then(() => {
+            successMessage.textContent = "✅ Email verifikasi telah dikirim ulang. Silakan cek inbox Anda.";
+            successMessage.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            loginForm.style.display = 'none';
+          })
           .catch((err) => {
-            errorMessage.textContent = `❌ Gagal login: ${err.message}`;
+            errorMessage.textContent = `❌ Maaf, gagal login: ${err.message}`;
             errorMessage.classList.remove('hidden');
           });
       } else if (error.code === 'auth/invalid-email') {
-        errorMessage.textContent = "❌ Format email tidak valid.";
+        errorMessage.textContent = "❌ Alamat email yang Anda masukkan tidak valid. Silakan periksa kembali.";
         errorMessage.classList.remove('hidden');
       } else {
-        errorMessage.textContent = `❌ ${error.message}`;
+        errorMessage.textContent = `❌ Terjadi kesalahan: ${error.message}`;
         errorMessage.classList.remove('hidden');
       }
     });
