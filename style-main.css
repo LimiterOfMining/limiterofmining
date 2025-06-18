@@ -142,7 +142,7 @@ form input {
   border: none;
 }
 
-button-login {
+.button-login {
   background: linear-gradient(to right, #00c6ff, #ff00cc);
   color: white;
   border: none;
@@ -155,7 +155,7 @@ button-login {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-button-login:hover {
+.button-login:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
