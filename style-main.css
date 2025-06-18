@@ -142,7 +142,7 @@ form input {
   border: none;
 }
 
-button {
+button-login {
   background: linear-gradient(to right, #00f0ff, #ff00e6);
   padding: 10px 20px;
   background-color: #28a745;
