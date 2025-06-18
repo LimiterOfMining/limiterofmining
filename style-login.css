@@ -3,14 +3,17 @@ body {
   background: #111;
   color: #eee;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 100vh;
+  padding: 40px 20px;
   margin: 0;
+  min-height: 100vh;
 }
 
 .container {
   text-align: center;
+  max-width: 400px;
+  width: 100%;
 }
 
 input {
@@ -18,27 +21,24 @@ input {
   margin: 10px 0;
   width: 250px;
   border-radius: 5px;
-  border: none;
+  border: 1px solid #ccc;
+  font-size: 16px;
 }
 
 button {
   background: linear-gradient(to right, #00f0ff, #ff00e6);
   padding: 10px 20px;
-  background-color: #28a745;
   color: white;
   font-size: 18px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-input[type="email"] {
-  padding: 10px;
-  font-size: 16px;
-  width: 250px;
-  margin-right: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
 }
 
 .hidden {
@@ -67,4 +67,5 @@ input[type="email"] {
   max-width: 600px;
   box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
   font-family: 'Segoe UI', sans-serif;
+  text-align: center;
 }
