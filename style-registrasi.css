@@ -82,3 +82,22 @@ button:hover {
   font-family: 'Segoe UI', sans-serif;
   text-align: center;
 }
+
+.copyright-info {
+  text-align: center;
+  font-size: 12px;
+  color: #bbb;
+  padding: 20px 10px 80px;
+  line-height: 1.5;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.copyright-info strong {
+  color: #fff;
+}
+
+.copyright-info .copyright-legal {
+  font-size: 11px;
+  color: #888;
+  margin-top: 3px;
+}
