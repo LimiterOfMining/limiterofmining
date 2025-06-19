@@ -72,3 +72,46 @@ document.getElementById("photoUpload").addEventListener("change", function () {
   };
   reader.readAsDataURL(file);
 });
+
+/// Animasi Background Bintang ///
+const canvas = document.getElementById("starsCanvas");
+  const ctx = canvas.getContext("2d");
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const stars = [];
+
+  // Generate 200 bintang acak (posisi, ukuran, kecepatan)
+  for (let i = 0; i < 200; i++) {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height;
+    const r = Math.random() * 1.5 + 0.5;
+    const speed = Math.random() * 0.3 + 0.1;
+    stars.push({ x, y, r, speed });
+  }
+
+  function animateStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let s of stars) {
+      s.y -= s.speed;
+      if (s.y < 0) {
+        s.y = canvas.height + Math.random() * 50;
+        s.x = Math.random() * canvas.width;
+      }
+
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'white';
+      ctx.fill();
+    }
+
+    requestAnimationFrame(animateStars);
+  }
+
+  animateStars();
