@@ -77,3 +77,43 @@ form button[type="submit"] {
 .hidden {
   display: none;
 }
+
+nav.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #111;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #333;
+  padding: 6px 0;
+  z-index: 999;
+}
+
+nav.bottom-nav a {
+  flex: 1;
+  text-align: center;
+  color: #aaa;
+  font-size: 12px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+nav.bottom-nav a img {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 2px;
+  object-fit: contain;
+}
+
+nav.bottom-nav a.active {
+  color: #00f0ff;
+}
+
+nav.bottom-nav a:hover {
+  color: #fff;
+}
