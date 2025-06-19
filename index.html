@@ -1,208 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Limiter Of Mining - Dashboard Login</title>
-  <link rel="stylesheet" href="style-main.css"/>
+  <title>Limiter Of Mining - Login</title>
+  <link rel="stylesheet" href="style-main.css" />
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 </head>
 <body>
   <img src="logodasboardlogin.png" alt="Logo Limiter Of Mining" class="logo-bg">
+
   <div class="login-container dynamic-border">
     <h1>★ Limiter Of Mining ★</h1>
-    <script>
-  // Inisialisasi Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyBps3E-x059gTZ9lblJaaC5R3n9wd2-hrY",
-    authDomain: "limiterofmining-69272.firebaseapp.com",
-    projectId: "limiterofmining-69272",
-    storageBucket: "limiterofmining-69272.appspot.com",
-    messagingSenderId: "69089394090",
-    appId: "1:69089394090:web:ee3e3ab8bd806574067fd3",
-    measurementId: "G-CE1BMD0DJD"
-  };
 
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
+    <!-- STATUS PLAYER -->
+    <div class="status-container">
+      <div class="status-item">
+        <span class="status-icon online-icon"></span>
+        <span id="player-online-count">0</span> Player Online
+      </div>
+      <div class="status-item">
+        <span class="status-icon mining-icon"></span>
+        <span id="player-mining-count">0</span> Player Menambang Saat Ini
+      </div>
+      <div class="status-item">
+        <span class="status-icon login-icon"></span>
+        <span id="player-login-count">16849</span> Player Login Saat Ini
+      </div>
+    </div>
 
-  function sendVerification() {
-    const email = document.getElementById("userEmail").value;
-    const password = "passwordDummy123"; // password sementara
-
-    auth.createUserWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        return userCredential.user.sendEmailVerification();
-      })
-      .then(() => {
-        alert("✅ Email verifikasi sudah dikirim!");
-      })
-      .catch((error) => {
-        if (error.code === "auth/email-already-in-use") {
-          // Kalau email sudah ada, coba kirim ulang verifikasi
-          auth.signInWithEmailAndPassword(email, password)
-            .then((userCredential) => {
-              return userCredential.user.sendEmailVerification();
-            })
-            .then(() => {
-              alert("✅ Email verifikasi dikirim ulang ke email terdaftar!");
-            })
-            .catch((err) => {
-              alert("❌ Gagal kirim verifikasi: " + err.message);
-            });
-        } else {
-          alert("❌ Error: " + error.message);
-        }
-      });
-  }
-    </script>
-    <div class="pickaxe-logo">
-  <svg viewBox="0 0 100 100" width="120" height="120">
-    <!-- Pickaxe kiri -->
-    <g class="pickaxe-left">
-      <!-- gagang -->
-      <rect x="49" y="20" width="2" height="40" fill="#8B4513" stroke="#5c3317" stroke-width="0.5" transform="rotate(-45 50 50)"/>
-      <!-- kepala pickaxe -->
-      <polygon points="48,20 50,10 52,20" fill="#ccc" stroke="#999" stroke-width="0.5" transform="rotate(-45 50 50)"/>
-    </g>
-
-    <!-- Pickaxe kanan -->
-    <g class="pickaxe-right">
-      <!-- gagang -->
-      <rect x="49" y="20" width="2" height="40" fill="#8B4513" stroke="#5c3317" stroke-width="0.5" transform="rotate(45 50 50)"/>
-      <!-- kepala pickaxe -->
-      <polygon points="48,20 50,10 52,20" fill="#ccc" stroke="#999" stroke-width="0.5" transform="rotate(45 50 50)"/>
-    </g>
-
-    <!-- Batu -->
-    <g class="rock">
-      <ellipse cx="50" cy="75" rx="12" ry="8" fill="#555" />
-      <!-- retakan -->
-      <path class="crack" d="M50 70 L50 80" stroke="#aaa" stroke-width="0.8" stroke-linecap="round" opacity="0"/>
-    </g>
-  </svg>
-</div>
-    
-<div class="status-container">
-  <div class="status-item">
-    <span class="status-icon online-icon"></span>
-    <span id="player-online-count">0</span> Player Online
-  </div>
-  <div class="status-item">
-    <span class="status-icon mining-icon"></span>
-    <span id="player-mining-count">0</span> Player Menambang Saat Ini
-  </div>
-  <div class="status-item">
-    <span class="status-icon login-icon"></span>
-    <span id="player-login-count">16849</span> Player Login Saat Ini
-  </div>
-</div>
-    
+    <!-- FORM LOGIN -->
     <div class="container">
       <form id="loginForm">
-      <input type="email" id="loginEmail" placeholder="Email" required />
-      <input type="password" id="loginPassword" placeholder="Password" required />
-      <button type="submit" class="btn-login">Login</button>
+        <input type="email" id="loginEmail" placeholder="Email" required />
+        <input type="password" id="loginPassword" placeholder="Password" required />
+        <button type="submit" class="btn-login">Login</button>
       </form>
       <div id="loginSuccess" class="hidden"></div>
-    <div id="loginError" class="hidden"></div>
+      <div id="loginError" class="hidden"></div>
     </div>
-    <p>Belum punya akun? Daftar di sini</p>
+
+    <!-- LINK REGISTRASI -->
+    <p>Belum punya akun?</p>
     <a href="registrasi.html">
-  <button class="button-registrasi">Registrasi</button>
+      <button class="button-registrasi">Registrasi</button>
     </a>
-      
+
+    <!-- TENTANG WEBSITE -->
     <div class="article-block dynamic-border">
       <h2>Tentang Website</h2>
-      <p>Limiter Of Mining adalah Game simulasi penambangan Bitcoin berbasis web.
-      Masuk dengan email Anda untuk mengelola alat tambang, upgrade level, dan melihat
-      hasil mining Anda secara real-time!</p>
+      <p>
+        Limiter Of Mining adalah Game simulasi penambangan Bitcoin berbasis web.
+        Masuk dengan email Anda untuk mengelola alat tambang, upgrade level,
+        dan melihat hasil mining Anda secara real-time!
+      </p>
     </div>
-    
-    <div class="about-block dynamic-border">
-  <h2>Tentang Kami</h2>
-  <p>
-    Limiter Of Mining adalah platform edukasi simulasi penambangan Bitcoin. Kami berfokus pada pengalaman bermain yang aman dan seru dengan teknologi modern.
-    <hr>
-    Limiter Of Mining Di ciptakan oleh devoloper yang bernama <cite><q><mark>Aril Bintang</mark></q></cite> proses pembuatan game ini sangat memakan banyak waktu dari tahun kerja <cite>4 Juni 2025</cite> Hanya Seorang diri
-  </p>
-</div>
 
-<div class="contact-block dynamic-border">
-  <h2>Kontak</h2>
-<div class="contact-grid">
-  <a class="contact-button" href="mailto:emailkamu@example.com" target="_blank">
-    <img src="img/gmail.png" alt="Gmail"> Gmail
-  </a>
-  <a class="contact-button" href="https://wa.me/6281234567890" target="_blank">
-    <img src="img/whatsapp.png" alt="WhatsApp"> WhatsApp
-  </a>
-  <a class="contact-button" href="https://instagram.com/usernamekamu" target="_blank">
-    <img src="img/instagram.png" alt="Instagram"> Instagram
-  </a>
-  <a class="contact-button" href="https://youtube.com/@channelkamu" target="_blank">
-    <img src="img/youtube.png" alt="YouTube"> YouTube
-  </a>
-  <a class="contact-button" href="https://x.com/usernamekamu" target="_blank">
-    <img src="img/x.png" alt="X"> X
-  </a>
-  <a class="contact-button" href="https://facebook.com/usernamekamu" target="_blank">
-    <img src="img/facebook.png" alt="Facebook"> Facebook
-  </a>
-  <a class="contact-button" href="https://discord.gg/linkkamu" target="_blank">
-    <img src="img/discord.png" alt="Discord"> Discord
-  </a>
-  <a class="contact-button" href="https://tiktok.gg/linkkamu" target="_blank">
-    <img src="img/tiktok.png" alt="Discord"> Tiktok
-  </a>
-</div>
-</div>
-<div class="footer-block">
-  <p>&copy; 2025 <strong>ArilBintang</strong>. All rights reserved.</p>
-  <p>Website ini dikembangkan untuk simulasi Game penambangan Bitcoin dan edukasi teknologi modern.</p>
-  <p>Made with 🔥 by ArilBintang</p>
-</div>
-</div>
+    <!-- TENTANG KAMI -->
+    <div class="about-block dynamic-border">
+      <h2>Tentang Kami</h2>
+      <p>
+        Limiter Of Mining adalah platform edukasi simulasi penambangan Bitcoin.
+        Kami berfokus pada pengalaman bermain yang aman dan seru dengan teknologi modern.
+        <hr>
+        Website ini dibuat oleh <mark>Aril Bintang</mark> sejak <strong>4 Juni 2025</strong> hanya oleh satu orang.
+      </p>
+    </div>
+
+    <!-- KONTAK -->
+    <div class="contact-block dynamic-border">
+      <h2>Kontak</h2>
+      <div class="contact-grid">
+        <a class="contact-button" href="mailto:emailkamu@example.com" target="_blank">
+          <img src="img/gmail.png" alt="Gmail"> Gmail
+        </a>
+        <a class="contact-button" href="https://wa.me/6281234567890" target="_blank">
+          <img src="img/whatsapp.png" alt="WhatsApp"> WhatsApp
+        </a>
+        <a class="contact-button" href="https://instagram.com/usernamekamu" target="_blank">
+          <img src="img/instagram.png" alt="Instagram"> Instagram
+        </a>
+        <a class="contact-button" href="https://youtube.com/@channelkamu" target="_blank">
+          <img src="img/youtube.png" alt="YouTube"> YouTube
+        </a>
+        <a class="contact-button" href="https://x.com/usernamekamu" target="_blank">
+          <img src="img/x.png" alt="X"> X
+        </a>
+        <a class="contact-button" href="https://facebook.com/usernamekamu" target="_blank">
+          <img src="img/facebook.png" alt="Facebook"> Facebook
+        </a>
+        <a class="contact-button" href="https://discord.gg/linkkamu" target="_blank">
+          <img src="img/discord.png" alt="Discord"> Discord
+        </a>
+        <a class="contact-button" href="https://tiktok.gg/linkkamu" target="_blank">
+          <img src="img/tiktok.png" alt="Tiktok"> Tiktok
+        </a>
+      </div>
+    </div>
+
+    <!-- COPYRIGHT -->
+    <footer class="copyright">
+      © 2025 Limiter of Mining. All rights reserved.<br>
+      Powered by <strong>Orbitron AI</strong>.
+    </footer>
   </div>
 
-  <script src="script.js"></script>
-  <script src="script-login.js"></script>
+  <!-- SCRIPT -->
   <script src="scriptonlinestatus.js"></script>
+  <script src="script-login.js"></script>
 </body>
-  <!-- Firebase CDN -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBps3E-x059gTZ9lblJaaC5R3n9wd2-hrY",
-    authDomain: "limiterofmining-69272.firebaseapp.com",
-    projectId: "limiterofmining-69272",
-    storageBucket: "limiterofmining-69272.appspot.com",
-    messagingSenderId: "69089394090",
-    appId: "1:69089394090:web:ee3e3ab8bd806574067fd3",
-    measurementId: "G-CE1BMD0DJD"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-
-  function sendVerification() {
-    const email = document.getElementById("userEmail").value;
-    const password = Math.random().toString(36).slice(-8);
-
-    auth.createUserWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        return userCredential.user.sendEmailVerification();
-      })
-      .then(() => {
-        alert("✅ Email verifikasi sudah dikirim. Silakan cek inbox kamu.");
-      })
-      .catch((error) => {
-        alert(`❌ ${error.message}`);
-      });
-  }
-</script>
-  
 </html>
