@@ -32,6 +32,12 @@ input {
   font-size: 16px;
 }
 
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 button {
   background: linear-gradient(to right, #00f0ff, #ff00e6);
   padding: 10px 20px;
