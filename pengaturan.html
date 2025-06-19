@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pengaturan Profil</title>
+  <link rel="stylesheet" href="style-pengaturan.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+</head>
+<body>
+  <div class="profile-container">
+    <h2>Pengaturan Akun</h2>
+
+    <!-- Tampilan awal ala CapCut -->
+    <div class="user-card">
+      <img id="profile-photo" src="default-profile.png" alt="Foto Profil" />
+      <div class="user-info">
+        <h3 id="player-name">Nama Player</h3>
+        <p id="player-id">ID123456</p>
+        <button id="edit-profile-btn">LIHAT PROFIL &gt;</button>
+      </div>
+    </div>
+
+    <!-- Form Edit Profil -->
+    <div id="profile-edit-section" class="hidden">
+      <h3>Edit Profil</h3>
+      <form id="profileForm">
+        <label>Nama Player:</label>
+        <input type="text" id="editName" readonly />
+
+        <label>ID Player:</label>
+        <input type="text" id="editID" readonly />
+
+        <label>Foto Profil:</label>
+        <input type="file" id="photoUpload" accept="image/*" />
+
+        <label>Gender:</label>
+        <select id="genderSelect">
+          <option value="">Pilih gender</option>
+          <option value="Laki-laki">Laki-laki</option>
+          <option value="Perempuan">Perempuan</option>
+        </select>
+
+        <label>Biodata:</label>
+        <textarea id="bioInput" placeholder="Tulis biodata singkat..."></textarea>
+
+        <button type="submit">Simpan Perubahan</button>
+        <nav class="bottom-nav">
+          <a href="beranda.html"><img src="img/home.png" /><span>Beranda</span></a>
+          <a href="market.html"><img src="img/market.png" /><span>Market</span></a>
+          <a href="game.html"><img src="img/game.png" /><span>Game</span></a>
+          <a href="dompet.html"><img src="img/dompet.png" /><span>Dompet</span></a>
+          <a href="pengaturan.html" class="active"><img src="img/pengaturan.png" /><span>Pengaturan</span></a>
+  </nav>
+  
+      </form>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script src="script-pengaturan.js"></script>
+</body>
+</html>

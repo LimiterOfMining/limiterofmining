@@ -1,0 +1,79 @@
+.profile-container {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #1a1a1a;
+  border-radius: 12px;
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #2c2c2c;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.user-card img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #555;
+}
+
+.user-card .user-info {
+  flex: 1;
+}
+
+#edit-profile-btn {
+  margin-top: 8px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #444;
+  color: white;
+  cursor: pointer;
+}
+
+#edit-profile-btn:hover {
+  background: #666;
+}
+
+form label {
+  display: block;
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+form input, form select, form textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border-radius: 6px;
+  border: none;
+  background: #333;
+  color: white;
+}
+
+form textarea {
+  resize: vertical;
+}
+
+form button[type="submit"] {
+  margin-top: 20px;
+  background: linear-gradient(to right, #00f0ff, #ff00e6);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.hidden {
+  display: none;
+}
