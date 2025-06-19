@@ -3,7 +3,7 @@ body {
   padding: 0;
   padding-top: 100px; /* Sudah cukup untuk beri ruang header */
   font-family: sans-serif;
-  background: black;
+  background: #000;
   color: #fff;
   overflow-x: hidden;
   overflow-y: auto;
@@ -11,47 +11,14 @@ body {
   scroll-behavior: smooth; /* biar scroll halus */
 }
 
-.stars {
+#starsCanvas {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: -1;
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.star {
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-  opacity: 0.8;
-  animation: starMove linear infinite;
-}
-
-.stars, .comets {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.stars div {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: white;
-  border-radius: 50%;
-  opacity: 0.8;
-  animation: starMove linear infinite;
-}
-
-@keyframes starMove {
-  0% { transform: translateY(100vh); }
-  100% { transform: translateY(-10vh); }
+  background: #000;
 }
 
 .comets div {
