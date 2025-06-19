@@ -1,4 +1,3 @@
-// ✅ Konfigurasi Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBps3E-x059gTZ9lblJaaC5R3n9wd2-hrY",
   authDomain: "limiterofmining-69272.firebaseapp.com",
@@ -9,25 +8,24 @@ const firebaseConfig = {
   measurementId: "G-CE1BMD0DJD"
 };
 
-// 🔥 Inisialisasi Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-// ✅ Cek auto-login → langsung masuk jika sudah login & verifikasi
+// Auto redirect jika user sudah login dan verifikasi
 auth.onAuthStateChanged(user => {
+  console.log("Auth state changed:", user);
   if (user && user.emailVerified) {
+    console.log("✅ Sudah login dan terverifikasi. Masuk ke beranda...");
     window.location.href = "beranda.html";
   }
 });
 
-// ✅ Ambil elemen HTML
 const loginForm = document.getElementById("loginForm");
 const emailInput = document.getElementById("loginEmail");
 const passInput = document.getElementById("loginPassword");
 const successMessage = document.getElementById("loginSuccess");
 const errorMessage = document.getElementById("loginError");
 
-// ✅ Event saat form login dikirim
 loginForm.addEventListener("submit", async function (e) {
   e.preventDefault();
   const email = emailInput.value.trim();
@@ -37,23 +35,28 @@ loginForm.addEventListener("submit", async function (e) {
     const userCredential = await auth.signInWithEmailAndPassword(email, password);
     const user = userCredential.user;
 
+    console.log("Login sukses:", user.email);
+
     if (user.emailVerified) {
       successMessage.textContent = "✅ Login berhasil! Mengarahkan ke beranda...";
       successMessage.classList.remove("hidden");
       errorMessage.classList.add("hidden");
+
+      // Delay supaya pesan sempat tampil
       setTimeout(() => {
         window.location.href = "beranda.html";
-      }, 1000);
+      }, 1500);
+
     } else {
       tampilkanError("⚠️ Email belum diverifikasi. Silakan cek inbox kamu.");
     }
 
   } catch (err) {
+    console.error("Login error:", err.code, err.message);
     tampilkanError("❌ Login gagal. Email atau password salah.");
   }
 });
 
-// ✅ Fungsi tampil error
 function tampilkanError(pesan) {
   errorMessage.textContent = pesan;
   errorMessage.classList.remove("hidden");
