@@ -142,6 +142,23 @@ form input {
   border: none;
 }
 
+button.btn-login {
+  background: linear-gradient(to right, #00f0ff, #ff00e6);
+  padding: 10px 20px;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+button.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+}
+
 .button-registrasi {
   background: linear-gradient(to right, #00c6ff, #ff00cc);
   color: white;
