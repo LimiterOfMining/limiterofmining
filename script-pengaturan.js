@@ -11,6 +11,8 @@ const firebaseConfig = {
 // 🔥 Inisialisasi Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
 
 // 🔄 Saat user login
 auth.onAuthStateChanged(user => {
@@ -23,52 +25,88 @@ auth.onAuthStateChanged(user => {
     document.getElementById("player-name").textContent = name;
     document.getElementById("player-id").textContent = "ID: " + id;
 
-    document.getElementById("editName").value = name;
-    document.getElementById("editID").value = id;
+    const nameInput = document.getElementById("editName");
+    const idInput = document.getElementById("editID");
 
-    // Tampilkan foto profil
-    const savedPhoto = localStorage.getItem("profile-photo");
-    const profilePhoto = savedPhoto || user.photoURL || "default-profile.png";
-    document.getElementById("profile-photo").src = profilePhoto;
+    if (nameInput && idInput) {
+      nameInput.value = name;
+      idInput.value = id;
+    }
 
-    // Tampilkan data lokal jika ada
-    document.getElementById("genderSelect").value = localStorage.getItem("gender") || "";
-    document.getElementById("bioInput").value = localStorage.getItem("bio") || "";
+    // 🔄 Ambil data profil dari Firestore
+    const userRef = db.collection("users").doc(user.uid);
+    userRef.get().then((doc) => {
+      if (doc.exists) {
+        const data = doc.data();
+
+        // GENDER & BIO
+        if (document.getElementById("genderSelect"))
+          document.getElementById("genderSelect").value = data.gender || localStorage.getItem("gender") || "";
+        if (document.getElementById("bioInput"))
+          document.getElementById("bioInput").value = data.bio || localStorage.getItem("bio") || "";
+
+        // FOTO PROFIL
+        const profilePhotoURL = data.photoURL || localStorage.getItem("profile-photo") || "default-profile.png";
+        document.getElementById("profile-photo").src = profilePhotoURL;
+      } else {
+        // Gunakan localStorage jika belum ada data Firestore
+        document.getElementById("profile-photo").src = localStorage.getItem("profile-photo") || "default-profile.png";
+      }
+    });
+
+    // 🎯 Tampilkan form edit jika tombol diklik
+    const editBtn = document.getElementById("edit-profile-btn");
+    if (editBtn) {
+      editBtn.addEventListener("click", () => {
+        document.getElementById("profile-edit-section").classList.remove("hidden");
+      });
+    }
+
+    // ✅ Simpan perubahan profil
+    const profileForm = document.getElementById("profileForm");
+    if (profileForm) {
+      profileForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const gender = document.getElementById("genderSelect").value;
+        const bio = document.getElementById("bioInput").value;
+
+        // Simpan ke localStorage
+        localStorage.setItem("gender", gender);
+        localStorage.setItem("bio", bio);
+
+        // Simpan ke Firestore
+        db.collection("users").doc(user.uid).set({ gender, bio }, { merge: true })
+          .then(() => alert("✅ Profil berhasil disimpan!"))
+          .catch((err) => console.error("Gagal simpan Firestore:", err));
+      });
+    }
+
+    // ✅ Upload Foto Profil → simpan ke Storage + Firestore
+    const photoInput = document.getElementById("photoUpload");
+    if (photoInput) {
+      photoInput.addEventListener("change", function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        const storageRef = storage.ref(`profilePhotos/${user.uid}.jpg`);
+        storageRef.put(file).then(() => {
+          return storageRef.getDownloadURL();
+        }).then((url) => {
+          // Tampilkan & simpan
+          document.getElementById("profile-photo").src = url;
+          localStorage.setItem("profile-photo", url);
+          return db.collection("users").doc(user.uid).set({ photoURL: url }, { merge: true });
+        }).then(() => {
+          alert("📸 Foto profil berhasil diupload!");
+        }).catch((err) => {
+          console.error("Upload gagal:", err);
+          alert("⚠️ Gagal upload foto.");
+        });
+      });
+    }
+
   } else {
     alert("⚠️ Anda belum login. Silakan login terlebih dahulu.");
     window.location.href = "index.html";
   }
-});
-
-// 🎯 Tombol tampilkan form
-document.getElementById("edit-profile-btn").addEventListener("click", () => {
-  document.getElementById("profile-edit-section").classList.remove("hidden");
-});
-
-// ✅ Simpan perubahan
-document.getElementById("profileForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  const gender = document.getElementById("genderSelect").value;
-  const bio = document.getElementById("bioInput").value;
-
-  // Simpan ke localStorage
-  localStorage.setItem("gender", gender);
-  localStorage.setItem("bio", bio);
-
-  alert("✅ Profil berhasil disimpan!");
-});
-
-// ✅ Upload foto profil
-document.getElementById("photoUpload").addEventListener("change", function () {
-  const file = this.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const imageURL = e.target.result;
-    document.getElementById("profile-photo").src = imageURL;
-    localStorage.setItem("profile-photo", imageURL);
-  };
-  reader.readAsDataURL(file);
 });
