@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Profil</title>
+  <link rel="stylesheet" href="style-lihat-profile.css" />
+</head>
+<body>
+  <canvas id="starsCanvas"></canvas>
+  <div class="profile-container">
+    <h2 class="judul-pengaturan-akun">
+      <img src="profile.png" alt="ikon" class="profile-icon">
+      Edit Profil
+    </h2>
+
+    <div class="edit-profile-card">
+      <form id="editProfileForm">
+        <label>Nama Player :</label>
+        <input type="text" id="editName" readonly />
+
+        <label>ID Player :</label>
+        <input type="text" id="editID" readonly />
+
+        <label>Foto Profil:</label>
+        <input type="file" id="photoUpload" accept="image/*" />
+        <img id="profile-photo" src="default-profile.png" alt="Foto Profil" />
+
+        <label>Gender :</label>
+        <select id="genderSelect">
+          <option value="">Pilih gender</option>
+          <option value="Laki-laki">Laki-laki</option>
+          <option value="Perempuan">Perempuan</option>
+        </select>
+
+        <label>Biodata :</label>
+        <textarea id="bioInput" placeholder="Tulis biodata singkat..."></textarea>
+
+        <button type="submit">Simpan Perubahan</button>
+      </form>
+    </div>
+  </div>
+  <a href="pengaturan.html" class="back-button">
+  <img src="back.png" alt="Kembali" />
+  <span>Kembali</span></a>
+  
+  <!-- Script bintang -->
+  <script>
+    const canvas = document.getElementById("starsCanvas");
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
+
+      const stars = [];
+      for (let i = 0; i < 200; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const r = Math.random() * 1.5 + 0.5;
+        const speed = Math.random() * 0.3 + 0.1;
+        stars.push({ x, y, r, speed });
+      }
+      
+      function animateStars() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let s of stars) {
+          s.y -= s.speed;
+          if (s.y < 0) {
+            s.y = canvas.height + Math.random() * 50;
+            s.x = Math.random() * canvas.width;
+          }
+
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = "white";
+          ctx.fill();
+        }
+
+        requestAnimationFrame(animateStars);
+      }
+
+      animateStars();
+    }
+  </script>
+
+  <script src="script-edit-profile.js"></script>
+</body>
+</html>
