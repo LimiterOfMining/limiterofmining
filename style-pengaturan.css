@@ -28,6 +28,18 @@ body {
   object-fit: contain;
 }
 
+.lihat-profile-link {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #007aff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  text-decoration: none;
+}
+
 .profile-container {
   max-width: 400px;
   margin: 40px auto;
