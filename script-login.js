@@ -33,17 +33,17 @@ loginForm.addEventListener("submit", async (e) => {
       return;
     }
 
-    // ✅ Perbarui displayName jika belum ada
+    // ✅ Set displayName jika kosong
     if (!user.displayName) {
-      const defaultName = email.split("@")[0]; // Contoh nama default
+      const defaultName = email.split("@")[0];
       await user.updateProfile({ displayName: defaultName });
     }
 
     successMessage.textContent = "✅ Login berhasil! Mengarahkan ke beranda...";
 
-    // Redirect setelah delay
+    // 🔁 Redirect ke beranda.html
     setTimeout(() => {
-      window.location.href = "pengaturan.html";
+      window.location.href = "beranda.html";
     }, 1500);
 
   } catch (error) {
