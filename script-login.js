@@ -1,3 +1,4 @@
+// Inisialisasi Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBps3E-x059gTZ9lblJaaC5R3n9wd2-hrY",
   authDomain: "limiterofmining-69272.firebaseapp.com",
@@ -9,38 +10,42 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db = firebase.firestore();
 
-const loginForm = document.getElementById("loginForm");
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const errorMessage = document.getElementById("error-message");
-const successMessage = document.getElementById("success-message");
-
-loginForm.addEventListener("submit", async (e) => {
+// Fungsi login
+document.getElementById("loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
-  errorMessage.textContent = "";
-  successMessage.textContent = "";
+  
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
 
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
+  auth.signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
 
-  try {
-    const result = await auth.signInWithEmailAndPassword(email, password);
-    const user = result.user;
+      // Ambil data user dari Firestore
+      return db.collection("users").doc(user.uid).get();
+    })
+    .then((doc) => {
+      if (doc.exists) {
+        const data = doc.data();
+        
+        // Simpan ke localStorage
+        localStorage.setItem("uid", doc.id);
+        localStorage.setItem("email", data.email || "");
+        localStorage.setItem("nama", data.nama || "Player");
+        localStorage.setItem("bio", data.bio || "");
+        localStorage.setItem("gender", data.gender || "");
+        localStorage.setItem("foto", data.foto || "");
 
-    // ✅ Auto set display name dari email jika belum ada
-    if (!user.displayName) {
-      const defaultName = email.split("@")[0];
-      await user.updateProfile({ displayName: defaultName });
-    }
-
-    successMessage.textContent = "✅ Login berhasil!";
-
-    setTimeout(() => {
-      window.location.href = "beranda.html";
-    }, 1000);
-
-  } catch (error) {
-    errorMessage.textContent = "❌ Gagal login: " + error.message;
-  }
+        // Arahkan ke beranda
+        window.location.href = "beranda.html";
+      } else {
+        alert("Data pengguna tidak ditemukan.");
+      }
+    })
+    .catch((error) => {
+      console.error("Login gagal:", error);
+      alert("Email atau Password salah.");
+    });
 });
