@@ -1,81 +1,64 @@
-// ✅ Konfigurasi Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBps3E-x059gTZ9lblJaaC5R3n9wd2-hrY",
   authDomain: "limiterofmining-69272.firebaseapp.com",
   projectId: "limiterofmining-69272",
   storageBucket: "limiterofmining-69272.appspot.com",
   messagingSenderId: "69089394090",
-  appId: "1:69089394090:web:ee3e3ab8bd806574067fd3"
+  appId: "1:69089394090:web:ee3e3ab8bd806574067fd3",
+  measurementId: "G-CE1BMD0DJD"
 };
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-// 🧩 Ambil elemen form
+// Auto redirect jika user sudah login dan verifikasi
+auth.onAuthStateChanged(user => {
+  console.log("Auth state changed:", user);
+  if (user && user.emailVerified) {
+    console.log("âœ… Sudah login dan terverifikasi. Masuk ke beranda...");
+    window.location.href = "beranda.html";
+  }
+});
+
 const loginForm = document.getElementById("loginForm");
 const emailInput = document.getElementById("loginEmail");
-const passwordInput = document.getElementById("loginPassword");
-const loginSuccess = document.getElementById("loginSuccess");
-const loginError = document.getElementById("loginError");
+const passInput = document.getElementById("loginPassword");
+const successMessage = document.getElementById("loginSuccess");
+const errorMessage = document.getElementById("loginError");
 
-loginForm.addEventListener("submit", function (e) {
+loginForm.addEventListener("submit", async function (e) {
   e.preventDefault();
-  loginSuccess.classList.add("hidden");
-  loginError.classList.add("hidden");
+  const email = emailInput.value.trim();
+  const password = passInput.value.trim();
 
-  const email = emailInput.value;
-  const password = passwordInput.value;
+  try {
+    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+    const user = userCredential.user;
 
-  auth.signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      const defaultName = email.split("@")[0];
+    console.log("Login sukses:", user.email);
 
-      // ✅ Set displayName jika belum ada
-      if (!user.displayName) {
-        return user.updateProfile({ displayName: defaultName }).then(() => user);
-      }
-      return user;
-    })
-    .then((user) => {
-      const db = firebase.firestore();
-      const userRef = db.collection("users").doc(user.uid);
+    if (user.emailVerified) {
+      successMessage.textContent = "âœ… Login berhasil! Mengarahkan ke beranda...";
+      successMessage.classList.remove("hidden");
+      errorMessage.classList.add("hidden");
 
-      // 🔒 Pastikan data Firestore user ada (buat jika belum)
-      return userRef.get().then((doc) => {
-        if (!doc.exists) {
-          return userRef.set({
-            gender: "",
-            bio: "",
-            photoURL: ""
-          });
-        }
-      }).then(() => user);
-    })
-    .then(() => {
-      loginSuccess.textContent = "✅ Login berhasil! Mengarahkan...";
-      loginSuccess.classList.remove("hidden");
-
+      // Delay supaya pesan sempat tampil
       setTimeout(() => {
         window.location.href = "beranda.html";
-      }, 1000);
-    })
-    .catch((error) => {
-      console.error("Login error:", error.code, error.message);
+      }, 1500);
 
-      // ✅ Tampilkan pesan spesifik agar kamu tahu masalah sebenarnya
-      if (error.code === "auth/wrong-password") {
-        loginError.textContent = "❌ Password salah.";
-      } else if (error.code === "auth/user-not-found") {
-        loginError.textContent = "❌ Email tidak ditemukan.";
-      } else if (error.code === "auth/too-many-requests") {
-        loginError.textContent = "⛔ Terlalu banyak percobaan. Coba lagi nanti.";
-      } else if (error.code === "auth/user-disabled") {
-        loginError.textContent = "⚠️ Akun ini telah dinonaktifkan.";
-      } else {
-        loginError.textContent = `❌ ${error.message}`;
-      }
+    } else {
+      tampilkanError("âš ï¸ Email belum diverifikasi. Silakan cek inbox kamu.");
+    }
 
-      loginError.classList.remove("hidden");
-    });
+  } catch (err) {
+    console.error("Login error:", err.code, err.message);
+    tampilkanError("âŒ Login gagal. Email atau password salah.");
+  }
 });
+
+function tampilkanError(pesan) {
+  errorMessage.textContent = pesan;
+  errorMessage.classList.remove("hidden");
+  successMessage.classList.add("hidden");
+}
