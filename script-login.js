@@ -4,61 +4,49 @@ const firebaseConfig = {
   projectId: "limiterofmining-69272",
   storageBucket: "limiterofmining-69272.appspot.com",
   messagingSenderId: "69089394090",
-  appId: "1:69089394090:web:ee3e3ab8bd806574067fd3",
-  measurementId: "G-CE1BMD0DJD"
+  appId: "1:69089394090:web:ee3e3ab8bd806574067fd3"
 };
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-// Auto redirect jika user sudah login dan verifikasi
-auth.onAuthStateChanged(user => {
-  console.log("Auth state changed:", user);
-  if (user && user.emailVerified) {
-    console.log("✅ Sudah login dan terverifikasi. Masuk ke beranda...");
-    window.location.href = "beranda.html";
-  }
-});
-
 const loginForm = document.getElementById("loginForm");
-const emailInput = document.getElementById("loginEmail");
-const passInput = document.getElementById("loginPassword");
-const successMessage = document.getElementById("loginSuccess");
-const errorMessage = document.getElementById("loginError");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const errorMessage = document.getElementById("error-message");
+const successMessage = document.getElementById("success-message");
 
-loginForm.addEventListener("submit", async function (e) {
+loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+  errorMessage.textContent = "";
+  successMessage.textContent = "";
+
   const email = emailInput.value.trim();
-  const password = passInput.value.trim();
+  const password = passwordInput.value;
 
   try {
-    const userCredential = await auth.signInWithEmailAndPassword(email, password);
-    const user = userCredential.user;
+    const result = await auth.signInWithEmailAndPassword(email, password);
+    const user = result.user;
 
-    console.log("Login sukses:", user.email);
-
-    if (user.emailVerified) {
-      successMessage.textContent = "✅ Login berhasil! Mengarahkan ke beranda...";
-      successMessage.classList.remove("hidden");
-      errorMessage.classList.add("hidden");
-
-      // Delay supaya pesan sempat tampil
-      setTimeout(() => {
-        window.location.href = "beranda.html";
-      }, 1500);
-
-    } else {
-      tampilkanError("⚠️ Email belum diverifikasi. Silakan cek inbox kamu.");
+    if (!user.emailVerified) {
+      errorMessage.textContent = "⚠️ Harap verifikasi email Anda terlebih dahulu.";
+      return;
     }
 
-  } catch (err) {
-    console.error("Login error:", err.code, err.message);
-    tampilkanError("❌ Login gagal. Email atau password salah.");
+    // ✅ Perbarui displayName jika belum ada
+    if (!user.displayName) {
+      const defaultName = email.split("@")[0]; // Contoh nama default
+      await user.updateProfile({ displayName: defaultName });
+    }
+
+    successMessage.textContent = "✅ Login berhasil! Mengarahkan ke beranda...";
+
+    // Redirect setelah delay
+    setTimeout(() => {
+      window.location.href = "pengaturan.html";
+    }, 1500);
+
+  } catch (error) {
+    errorMessage.textContent = "❌ Gagal login: " + error.message;
   }
 });
-
-function tampilkanError(pesan) {
-  errorMessage.textContent = pesan;
-  errorMessage.classList.remove("hidden");
-  successMessage.classList.add("hidden");
-}
