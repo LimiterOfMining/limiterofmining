@@ -68,6 +68,13 @@ form.addEventListener("submit", async function (e) {
       displayName: `${name} | ID: ${playerID}`
     });
 
+    // ✅ Tambahkan data kosong ke Firestore
+    await db.collection("users").doc(user.uid).set({
+      gender: "",
+      bio: "",
+      photoURL: ""
+    });
+
     // Kirim verifikasi email
     await user.sendEmailVerification();
 
