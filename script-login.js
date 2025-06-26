@@ -29,13 +29,28 @@ loginForm.addEventListener("submit", function (e) {
   auth.signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
       const user = userCredential.user;
+      const defaultName = email.split("@")[0];
 
       // ✅ Set displayName jika belum ada
       if (!user.displayName) {
-        const defaultName = email.split("@")[0];
         return user.updateProfile({ displayName: defaultName }).then(() => user);
       }
       return user;
+    })
+    .then((user) => {
+      const db = firebase.firestore();
+      const userRef = db.collection("users").doc(user.uid);
+
+      // 🔒 Pastikan data Firestore user ada (buat jika belum)
+      return userRef.get().then((doc) => {
+        if (!doc.exists) {
+          return userRef.set({
+            gender: "",
+            bio: "",
+            photoURL: ""
+          });
+        }
+      }).then(() => user);
     })
     .then(() => {
       loginSuccess.textContent = "✅ Login berhasil! Mengarahkan...";
