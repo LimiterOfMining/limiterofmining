@@ -28,23 +28,17 @@ loginForm.addEventListener("submit", async (e) => {
     const result = await auth.signInWithEmailAndPassword(email, password);
     const user = result.user;
 
-    if (!user.emailVerified) {
-      errorMessage.textContent = "⚠️ Harap verifikasi email Anda terlebih dahulu.";
-      return;
-    }
-
-    // ✅ Set displayName jika kosong
+    // ✅ Auto set display name dari email jika belum ada
     if (!user.displayName) {
       const defaultName = email.split("@")[0];
       await user.updateProfile({ displayName: defaultName });
     }
 
-    successMessage.textContent = "✅ Login berhasil! Mengarahkan ke beranda...";
+    successMessage.textContent = "✅ Login berhasil!";
 
-    // 🔁 Redirect ke beranda.html
     setTimeout(() => {
       window.location.href = "beranda.html";
-    }, 1500);
+    }, 1000);
 
   } catch (error) {
     errorMessage.textContent = "❌ Gagal login: " + error.message;
