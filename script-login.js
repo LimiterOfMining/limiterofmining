@@ -1,3 +1,4 @@
+// ✅ Konfigurasi Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBps3E-x059gTZ9lblJaaC5R3n9wd2-hrY",
   authDomain: "limiterofmining-69272.firebaseapp.com",
@@ -10,55 +11,29 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const provider = new firebase.auth.GoogleAuthProvider();
 
-// Auto redirect jika user sudah login dan verifikasi
+// ✅ Auto redirect jika user sudah login
 auth.onAuthStateChanged(user => {
-  console.log("Auth state changed:", user);
-  if (user && user.emailVerified) {
-    console.log("âœ… Sudah login dan terverifikasi. Masuk ke beranda...");
+  if (user) {
+    console.log("✅ Sudah login:", user.email);
     window.location.href = "beranda.html";
   }
 });
 
-const loginForm = document.getElementById("loginForm");
-const emailInput = document.getElementById("loginEmail");
-const passInput = document.getElementById("loginPassword");
-const successMessage = document.getElementById("loginSuccess");
-const errorMessage = document.getElementById("loginError");
-
-loginForm.addEventListener("submit", async function (e) {
-  e.preventDefault();
-  const email = emailInput.value.trim();
-  const password = passInput.value.trim();
-
+// ✅ Login Google
+document.getElementById("googleLogin").addEventListener("click", async () => {
   try {
-    const userCredential = await auth.signInWithEmailAndPassword(email, password);
-    const user = userCredential.user;
-
-    console.log("Login sukses:", user.email);
-
-    if (user.emailVerified) {
-      successMessage.textContent = "âœ… Login berhasil! Mengarahkan ke beranda...";
-      successMessage.classList.remove("hidden");
-      errorMessage.classList.add("hidden");
-
-      // Delay supaya pesan sempat tampil
-      setTimeout(() => {
-        window.location.href = "beranda.html";
-      }, 1500);
-
-    } else {
-      tampilkanError("âš ï¸ Email belum diverifikasi. Silakan cek inbox kamu.");
-    }
-
+    const result = await auth.signInWithPopup(provider);
+    const user = result.user;
+    console.log("✅ Login sukses:", user.displayName, user.email);
+    window.location.href = "beranda.html";
   } catch (err) {
-    console.error("Login error:", err.code, err.message);
-    tampilkanError("âŒ Login gagal. Email atau password salah.");
+    console.error("❌ Gagal login Google:", err.message);
+    const errorBox = document.getElementById("loginError");
+    if (errorBox) {
+      errorBox.textContent = "❌ Gagal login Google. Coba lagi.";
+      errorBox.classList.remove("hidden");
+    }
   }
 });
-
-function tampilkanError(pesan) {
-  errorMessage.textContent = pesan;
-  errorMessage.classList.remove("hidden");
-  successMessage.classList.add("hidden");
-}
