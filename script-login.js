@@ -13,7 +13,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 
-// ✅ Ambil hasil login Google redirect (saat kembali dari Google)
+// ✅ Ambil hasil redirect login Google
 auth.getRedirectResult()
   .then((result) => {
     if (result.user) {
@@ -25,18 +25,10 @@ auth.getRedirectResult()
     console.error("❌ Redirect error:", error.message);
     const errorBox = document.getElementById("loginError");
     if (errorBox) {
-      errorBox.textContent = "❌ Gagal login Google. Coba lagi.";
+      errorBox.textContent = "❌ Gagal login Google. " + error.message;
       errorBox.classList.remove("hidden");
     }
   });
-
-// ✅ Auto redirect jika user sudah login
-auth.onAuthStateChanged(user => {
-  if (user) {
-    console.log("✅ Sudah login:", user.email);
-    window.location.href = "beranda.html";
-  }
-});
 
 // ✅ Tombol Login Google
 document.getElementById("googleLogin").addEventListener("click", () => {
