@@ -61,8 +61,21 @@ loginForm.addEventListener("submit", function (e) {
       }, 1000);
     })
     .catch((error) => {
-      console.error("Login error:", error.message);
-      loginError.textContent = "❌ Email atau password salah.";
+      console.error("Login error:", error.code, error.message);
+
+      // ✅ Tampilkan pesan spesifik agar kamu tahu masalah sebenarnya
+      if (error.code === "auth/wrong-password") {
+        loginError.textContent = "❌ Password salah.";
+      } else if (error.code === "auth/user-not-found") {
+        loginError.textContent = "❌ Email tidak ditemukan.";
+      } else if (error.code === "auth/too-many-requests") {
+        loginError.textContent = "⛔ Terlalu banyak percobaan. Coba lagi nanti.";
+      } else if (error.code === "auth/user-disabled") {
+        loginError.textContent = "⚠️ Akun ini telah dinonaktifkan.";
+      } else {
+        loginError.textContent = `❌ ${error.message}`;
+      }
+
       loginError.classList.remove("hidden");
     });
 });
