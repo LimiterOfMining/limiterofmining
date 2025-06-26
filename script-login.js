@@ -1,4 +1,4 @@
-// Inisialisasi Firebase
+// ✅ Konfigurasi Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBps3E-x059gTZ9lblJaaC5R3n9wd2-hrY",
   authDomain: "limiterofmining-69272.firebaseapp.com",
@@ -10,42 +10,44 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const db = firebase.firestore();
 
-// Fungsi login
-document.getElementById("loginForm").addEventListener("submit", function (e) {
+// 🧩 Ambil elemen form
+const loginForm = document.getElementById("loginForm");
+const emailInput = document.getElementById("loginEmail");
+const passwordInput = document.getElementById("loginPassword");
+const loginSuccess = document.getElementById("loginSuccess");
+const loginError = document.getElementById("loginError");
+
+loginForm.addEventListener("submit", function (e) {
   e.preventDefault();
-  
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+  loginSuccess.classList.add("hidden");
+  loginError.classList.add("hidden");
+
+  const email = emailInput.value;
+  const password = passwordInput.value;
 
   auth.signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
       const user = userCredential.user;
 
-      // Ambil data user dari Firestore
-      return db.collection("users").doc(user.uid).get();
-    })
-    .then((doc) => {
-      if (doc.exists) {
-        const data = doc.data();
-        
-        // Simpan ke localStorage
-        localStorage.setItem("uid", doc.id);
-        localStorage.setItem("email", data.email || "");
-        localStorage.setItem("nama", data.nama || "Player");
-        localStorage.setItem("bio", data.bio || "");
-        localStorage.setItem("gender", data.gender || "");
-        localStorage.setItem("foto", data.foto || "");
-
-        // Arahkan ke beranda
-        window.location.href = "beranda.html";
-      } else {
-        alert("Data pengguna tidak ditemukan.");
+      // ✅ Set displayName jika belum ada
+      if (!user.displayName) {
+        const defaultName = email.split("@")[0];
+        return user.updateProfile({ displayName: defaultName }).then(() => user);
       }
+      return user;
+    })
+    .then(() => {
+      loginSuccess.textContent = "✅ Login berhasil! Mengarahkan...";
+      loginSuccess.classList.remove("hidden");
+
+      setTimeout(() => {
+        window.location.href = "beranda.html";
+      }, 1000);
     })
     .catch((error) => {
-      console.error("Login gagal:", error);
-      alert("Email atau Password salah.");
+      console.error("Login error:", error.message);
+      loginError.textContent = "❌ Email atau password salah.";
+      loginError.classList.remove("hidden");
     });
 });
