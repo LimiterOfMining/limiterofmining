@@ -75,19 +75,16 @@ form.addEventListener("submit", async function (e) {
       photoURL: ""
     });
 
-    // Kirim verifikasi email
-    await user.sendEmailVerification();
-
+    auth.currentUser.sendEmailVerification()
+  .then(() => {
     tampilkanSukses(`✅ Akun berhasil dibuat!<br>
     📩 Link verifikasi sudah dikirim ke email.<br>
     🆔 ID Player kamu: <strong>${playerID}</strong>`);
-
-    form.style.display = "none";
-
-  } catch (err) {
-    tampilkanError(convertError(err));
-  }
-});
+  })
+  .catch((error) => {
+    console.error("Gagal kirim email verifikasi:", error);
+    tampilkanError("❌ Gagal mengirim verifikasi email. Coba beberapa saat lagi.");
+  });
 
 // Fungsi tampil sukses
 function tampilkanSukses(msg) {
