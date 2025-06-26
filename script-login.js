@@ -24,7 +24,7 @@ auth.onAuthStateChanged(user => {
 // ✅ Login Google
 document.getElementById("googleLogin").addEventListener("click", async () => {
   try {
-    const result = await auth.signInWithPopup(provider);
+    const result = await auth.signInWithRedirect(provider);
     const user = result.user;
     console.log("✅ Login sukses:", user.displayName, user.email);
     window.location.href = "beranda.html";
