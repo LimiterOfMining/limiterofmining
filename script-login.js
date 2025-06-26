@@ -13,6 +13,23 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 
+// ✅ Ambil hasil login Google redirect (saat kembali dari Google)
+auth.getRedirectResult()
+  .then((result) => {
+    if (result.user) {
+      console.log("✅ Login redirect sukses:", result.user.email);
+      window.location.href = "beranda.html";
+    }
+  })
+  .catch((error) => {
+    console.error("❌ Redirect error:", error.message);
+    const errorBox = document.getElementById("loginError");
+    if (errorBox) {
+      errorBox.textContent = "❌ Gagal login Google. Coba lagi.";
+      errorBox.classList.remove("hidden");
+    }
+  });
+
 // ✅ Auto redirect jika user sudah login
 auth.onAuthStateChanged(user => {
   if (user) {
@@ -21,19 +38,7 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-// ✅ Login Google
-document.getElementById("googleLogin").addEventListener("click", async () => {
-  try {
-    const result = await auth.signInWithRedirect(provider);
-    const user = result.user;
-    console.log("✅ Login sukses:", user.displayName, user.email);
-    window.location.href = "beranda.html";
-  } catch (err) {
-    console.error("❌ Gagal login Google:", err.message);
-    const errorBox = document.getElementById("loginError");
-    if (errorBox) {
-      errorBox.textContent = "❌ Gagal login Google. Coba lagi.";
-      errorBox.classList.remove("hidden");
-    }
-  }
+// ✅ Tombol Login Google
+document.getElementById("googleLogin").addEventListener("click", () => {
+  auth.signInWithRedirect(provider);
 });
