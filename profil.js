@@ -28,14 +28,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (nameEl) nameEl.textContent = user.name || "No Name";
   if (idEl) idEl.textContent = `ID: ${user.id || "-"}`;
-  if (emailEl) emailEl.textContent = `Email: ${user.email || "-"}`;
-  if (locationEl) locationEl.textContent = `Lokasi: ${user.country || "-"}, ${user.city || "-"}`;
+  if (emailEl) {
+    emailEl.innerHTML = `
+      <img src="img/communication.png" alt="email" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;">
+      ${user.email || "-"}
+    `;
+  }
+  if (locationEl) {
+    locationEl.innerHTML = `
+      <img src="img/location.png" alt="lokasi" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;">
+      ${user.country || "-"}, ${user.city || "-"}
+    `;
+  }
 
   // Inisial huruf pertama sebagai avatar jika tidak ada foto
   if (avatarImg) {
     const initial = (user.name?.charAt(0) || "?").toUpperCase();
 
-    // Hapus gambar dan buat huruf
+    // Sembunyikan gambar avatar default
     avatarImg.style.visibility = "hidden";
 
     // cek kalau sudah ada div avatar sebelumnya
