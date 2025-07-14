@@ -31,25 +31,11 @@ h2 {
   font-size: 22px;
   color: #ffd700;
 }
-.login-btn {
-  display: inline-block;
-  background: #ffd700;
-  color: #000;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  text-decoration: none;
-  margin-top: 20px;
-  transition: all 0.3s ease;
-}
-.login-btn:hover {
-  background: #fff6cc;
-}
 </style>
 </head>
 
 <body>
+
 <div id="login-popup">
   <h2>Selamat Datang di LIMIT OF TRADING INC</h2>
   <div id="g_id_onload"
@@ -85,12 +71,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-if (localStorage.getItem("user")) {
-  window.location.href = "beranda.html";
-}
+// pindahkan cek user ke DOMContentLoaded biar gak jalan sebelum siap
+document.addEventListener("DOMContentLoaded", () => {
+  if (localStorage.getItem("user")) {
+    console.log("User sudah login, redirect ke beranda.html");
+    window.location.href = "beranda.html";
+  }
+});
 
 window.handleCredentialResponse = (response) => {
   const data = jwt_decode(response.credential);
+  console.log("Google response:", data);
 
   const user = {
     googleId: data.sub,
@@ -100,12 +91,15 @@ window.handleCredentialResponse = (response) => {
     locale: (data.locale || 'US').toUpperCase()
   };
 
+  console.log("User setelah decode:", user);
+
   const userRef = ref(db, `users/${user.googleId}`);
   get(userRef).then(snapshot => {
     if (snapshot.exists()) {
       const dbUser = snapshot.val();
       user.firebaseId = dbUser.firebaseId;
       localStorage.setItem("user", JSON.stringify(user));
+      console.log("User sudah ada di Firebase → redirect ke beranda.html");
       window.location.href = "beranda.html";
     } else {
       const firebaseId = push(ref(db, "users")).key;
@@ -115,9 +109,14 @@ window.handleCredentialResponse = (response) => {
       }).then(() => {
         user.firebaseId = firebaseId;
         localStorage.setItem("user", JSON.stringify(user));
+        console.log("User baru disimpan di Firebase → redirect ke beranda.html");
         window.location.href = "beranda.html";
+      }).catch(err => {
+        console.error("Gagal menyimpan user baru:", err);
       });
     }
+  }).catch(err => {
+    console.error("Error ambil user dari Firebase:", err);
   });
 };
 </script>
