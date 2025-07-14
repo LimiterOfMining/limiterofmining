@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login</title>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+
+<style>
+body {
+  margin: 0;
+  background: #1e1e1e;
+  color: white;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+#login-popup {
+  background: #2e2e2e;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+h2 { margin-bottom: 20px; }
+</style>
+</head>
+
+<body>
+
+<div id="login-popup">
+  <h2>Login untuk memulai</h2>
+  <div id="g_id_onload"
+      data-client_id="214703140470-6t2qfe8mv6bejcidkk0as7p024qjuoqi.apps.googleusercontent.com"
+      data-callback="handleCredentialResponse"
+      data-auto_prompt="false">
+  </div>
+  <div class="g_id_signin"
+      data-type="standard"
+      data-size="large"
+      data-theme="outline"
+      data-text="sign_in_with"
+      data-shape="rectangular"
+      data-logo_alignment="left">
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getDatabase, ref, set, get, push } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBDOs780kC2SLvU0OLiFWIL5IxISuZRf_w",
+  authDomain: "limit-of-trading-inc.firebaseapp.com",
+  databaseURL: "https://limit-of-trading-inc-default-rtdb.firebaseio.com",
+  projectId: "limit-of-trading-inc",
+  storageBucket: "limit-of-trading-inc.firebasestorage.app",
+  messagingSenderId: "1029104864288",
+  appId: "1:1029104864288:web:d1ebe56e80b8b11fa78045",
+  measurementId: "G-5CYRFYWBZ7"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+if (localStorage.getItem("user")) {
+  window.location.href = "beranda.html";
+}
+
+window.handleCredentialResponse = (response) => {
+  const data = jwt_decode(response.credential);
+
+  const user = {
+    googleId: data.sub,
+    name: data.name,
+    email: data.email,
+    picture: data.picture,
+    locale: data.locale || 'US'
+  };
+
+  const userRef = ref(db, `users/${user.googleId}`);
+  get(userRef).then(snapshot => {
+    if (snapshot.exists()) {
+      const dbUser = snapshot.val();
+      user.firebaseId = dbUser.firebaseId;
+      localStorage.setItem("user", JSON.stringify(user));
+      window.location.href = "beranda.html";
+    } else {
+      const firebaseId = push(ref(db, "users")).key;
+      set(userRef, {
+        ...user,
+        firebaseId: firebaseId
+      }).then(() => {
+        user.firebaseId = firebaseId;
+        localStorage.setItem("user", JSON.stringify(user));
+        window.location.href = "beranda.html";
+      });
+    }
+  });
+};
+</script>
+
+</body>
+</html>
