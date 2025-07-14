@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loading...</title>
+<style>
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #1e1e1e, #3a2a1d);
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.logo {
+  text-align: center;
+  font-size: clamp(24px, 6vw, 48px);
+  font-weight: bold;
+  position: relative;
+  color: #fff;
+  background: linear-gradient(
+    to right, 
+    #FFD700 20%, 
+    #FFF8DC 40%, 
+    #FFD700 60%, 
+    #FFF8DC 80%
+  );
+  background-size: 200% auto;
+  color: #FFD700;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 2s linear infinite;
+}
+
+@keyframes shine {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="logo">
+  LIMIT OF TRADING INC
+</div>
+
+<script>
+setTimeout(() => {
+  window.location.href = "login.html";
+}, 3000);
+</script>
+
+</body>
+</html>
