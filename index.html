@@ -1,40 +1,49 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Loading...</title>
-  <style>
-    body {
-      margin: 0;
-      background: #111;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      font-family: sans-serif;
-    }
-    .logo {
-      text-align: center;
-      animation: fade 2s ease-in-out infinite;
-    }
-    @keyframes fade {
-      0%, 100% { opacity: 0.2; }
-      50% { opacity: 1; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Limit of Trading Inc</title>
+<style>
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #1e1e1e, #3a2a1d);
+  color: #ffd700;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+.logo {
+  text-align: center;
+  animation: fade 2s ease-in-out infinite;
+}
+.logo h1 {
+  font-size: 36px;
+  letter-spacing: 2px;
+}
+.logo p {
+  font-size: 18px;
+  color: #fff6cc;
+}
+@keyframes fade {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+</style>
 </head>
 <body>
-  <div class="logo">
-    <h1>LIMIT OF TRADING INC</h1>
-    <p>Loading...</p>
-  </div>
+<div class="logo">
+  <h1>🚀 LIMIT OF TRADING INC 🚀</h1>
+  <p>Loading... Mohon tunggu</p>
+</div>
 
-  <script>
-    setTimeout(() => {
-      window.location.href = "login.html";
-    }, 3000); // 3 detik delay
-  </script>
+<script>
+setTimeout(() => {
+  window.location.href = "login.html";
+}, 3000);
+</script>
 </body>
 </html>
