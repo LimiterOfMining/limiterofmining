@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beranda</title>
+  <link rel="stylesheet" href="beranda.css" />
+</head>
+<body>
+
+  <!-- Top Bar: Pencarian & Notifikasi -->
+  <div class="top-bar">
+    <img src="img/beranda/bric/search.png" alt="Cari" />
+    <img src="img/beranda/bric/bell.png" alt="Notifikasi" />
+  </div>
+
+  <div class="container">
+
+    <!-- Estimasi Nilai Aset -->
+    <div class="asset-label" style="margin: 0 16px 4px;">
+      Estimasi Nilai Aset 
+      <span class="info-icon" onclick="openPopup()">ⓘ</span>
+    </div>
+    <div class="asset-value" style="margin: 0 16px 16px;">
+      210 IDR <span class="eye-icon">👁️</span>
+    </div>
+
+<!-- Wrapper gabungan -->
+<div class="beranda-wrapper">
+
+  <!-- ✅ Konten yang bisa discroll -->
+  <div class="beranda-scroll">
+
+    <!-- Bar Informasi -->
+    <div class="info-bar">
+      Informasi: Bank Sampoerna dengan nomina.
+    </div>
+
+    <!-- Menu Grid -->
+    <div class="menu-grid">
+      <div class="menu-item">
+        <div class="menu-icon"><img src="img/beranda/bric/bank.png" alt="Setor" /></div>
+        Setor
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon"><img src="img/beranda/bric/coin.png" alt="Earn" /></div>
+        Earn
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon"><img src="img/beranda/bric/schedule.png" alt="Invest Rutin" /></div>
+        Invest Rutin
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon"><img src="img/beranda/bric/document.png" alt="Riwayat" /></div>
+        Riwayat
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon"><img src="img/beranda/bric/cs.png" alt="Live Chat" /></div>
+        Live Chat
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon"><img src="img/beranda/bric/graduation-diploma.png" alt="Academy" /></div>
+        Academy
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon"><img src="img/beranda/bric/add-friend.png" alt="Referral" /></div>
+        Referral
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon"><img src="img/beranda/bric/chat.png" alt="Chat Room" /></div>
+        Chat Room
+      </div>
+    </div>
+
+    <!-- Harga Coin -->
+    <div class="price-box">
+      <div class="coin-card">
+        <div class="coin-name">
+          <img src="img/beranda/misi2/bitcoin.png" alt="BTC" class="coin-icon" />
+          BTC/IDR
+        </div>
+        <div class="coin-value">1.879.905.000</div>
+        <div class="coin-change green">+2.73%</div>
+      </div>
+
+      <div class="coin-card">
+        <div class="coin-name">
+          <img src="img/beranda/misi2/ethereum.png" alt="ETH" class="coin-icon" />
+          ETH/IDR
+        </div>
+        <div class="coin-value">47.000.000</div>
+        <div class="coin-change red">-0.07%</div>
+      </div>
+
+      <div class="coin-card">
+        <div class="coin-name">
+          <img src="img/beranda/misi2/usdt.png" alt="USDT" class="coin-icon" />
+          USDT/IDR
+        </div>
+        <div class="coin-value">16.076</div>
+        <div class="coin-change red">-0.16%</div>
+      </div>
+    </div>
+
+<div class="tab-bar">
+  <div class="tab-button active" onclick="showTab('trending')">Trending</div>
+  <div class="tab-button" onclick="showTab('gainers')">Gainers</div>
+  <div class="tab-button" onclick="showTab('losers')">Losers</div>
+  <div class="tab-button" onclick="showTab('koinbaru')">Koin Baru</div>
+  <div class="tab-button" onclick="showTab('matauang')">Mata Uang</div>
+  <div class="tab-button" onclick="showTab('asettambang')">Aset Tambang</div>
+  <div class="tab-button" onclick="showTab('lembaga')">Lembaga</div>
+</div>
+
+<div class="content">
+
+  <div id="trending" class="tab-content active">
+    <ul>
+      <li><img src="icons/btc.png" alt="BTC" width="16"> Bitcoin / BTC</li>
+      <li><img src="icons/eth.png" alt="ETH" width="16"> Ethereum / ETH</li>
+      <li><img src="icons/sol.png" alt="SOL" width="16"> Solana / SOL</li>
+      <li><img src="icons/xrp.png" alt="XRP" width="16"> Ripple / XRP</li>
+      <li><img src="icons/ada.png" alt="ADA" width="16"> Cardano / ADA</li>
+    </ul>
+  </div>
+
+  <div id="gainers" class="tab-content">
+    <ul>
+      <li><img src="icons/ape.png" alt="APE" width="16"> ApeCoin / APE +25%</li>
+      <li><img src="icons/doge.png" alt="DOGE" width="16"> Dogecoin / DOGE +20%</li>
+      <li><img src="icons/shib.png" alt="SHIB" width="16"> Shiba Inu / SHIB +18%</li>
+      <li><img src="icons/matic.png" alt="MATIC" width="16"> Polygon / MATIC +15%</li>
+      <li><img src="icons/link.png" alt="LINK" width="16"> Chainlink / LINK +12%</li>
+    </ul>
+  </div>
+
+  <div id="losers" class="tab-content">
+    <ul>
+      <li><img src="icons/luna.png" alt="LUNA" width="16"> Luna / LUNA -30%</li>
+      <li><img src="icons/ftt.png" alt="FTT" width="16"> FTX Token / FTT -25%</li>
+      <li><img src="icons/cel.png" alt="CEL" width="16"> Celsius / CEL -20%</li>
+      <li><img src="icons/vgx.png" alt="VGX" width="16"> Voyager / VGX -18%</li>
+      <li><img src="icons/lunc.png" alt="LUNC" width="16"> TerraClassic / LUNC -15%</li>
+    </ul>
+  </div>
+
+  <div id="koinbaru" class="tab-content">
+    <ul>
+      <li><img src="icons/arb.png" alt="ARB" width="16"> Arbitrum / ARB</li>
+      <li><img src="icons/op.png" alt="OP" width="16"> Optimism / OP</li>
+      <li><img src="icons/blur.png" alt="BLUR" width="16"> Blur / BLUR</li>
+      <li><img src="icons/sui.png" alt="SUI" width="16"> Sui / SUI</li>
+      <li><img src="icons/sei.png" alt="SEI" width="16"> Sei / SEI</li>
+    </ul>
+  </div>
+
+  <div id="matauang" class="tab-content">
+    <ul>
+      <li><img src="icons/usd.png" alt="USD" width="16"> USD / Dollar Amerika</li>
+      <li><img src="icons/eur.png" alt="EUR" width="16"> EUR / Euro</li>
+      <li><img src="icons/jpy.png" alt="JPY" width="16"> JPY / Yen Jepang</li>
+      <li><img src="icons/gbp.png" alt="GBP" width="16"> GBP / Poundsterling</li>
+      <li><img src="icons/cny.png" alt="CNY" width="16"> CNY / Yuan China</li>
+    </ul>
+  </div>
+
+  <div id="asettambang" class="tab-content">
+    <ul>
+      <li><img src="icons/gold.png" alt="Gold" width="16"> Emas</li>
+      <li><img src="icons/silver.png" alt="Silver" width="16"> Perak</li>
+      <li><img src="icons/copper.png" alt="Copper" width="16"> Tembaga</li>
+      <li><img src="icons/coal.png" alt="Coal" width="16"> Batu Bara</li>
+      <li><img src="icons/nickel.png" alt="Nickel" width="16"> Nikel</li>
+    </ul>
+  </div>
+
+  <div id="lembaga" class="tab-content">
+    <ul>
+      <li><img src="icons/bi.png" alt="BI" width="16"> Bank Indonesia</li>
+      <li><img src="icons/ojk.png" alt="OJK" width="16"> OJK (Otoritas Jasa Keuangan)</li>
+      <li><img src="icons/bei.png" alt="BEI" width="16"> Bursa Efek Indonesia</li>
+      <li><img src="icons/imf.png" alt="IMF" width="16"> IMF</li>
+      <li><img src="icons/worldbank.png" alt="World Bank" width="16"> World Bank</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+function showTab(tabId) {
+  document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(cont => cont.classList.remove('active'));
+
+  document.querySelector(`.tab-button[onclick*='${tabId}']`).classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+</script>
+
+
+ 
+  </div> <!-- end .scrollable-content -->
+
+</div> <!-- end .beranda-wrapper -->
+
+  <!-- POPUP -->
+  <div id="infoPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+      <button class="close-popup" onclick="closePopup()">✖</button>
+      <h2>Estimasi Nilai Aset</h2>
+      <p>Estimasi nilai aset merupakan perkiraan nilai total dari seluruh aset yang Anda miliki.</p>
+    </div>
+  </div>
+
+  <!-- Navigasi -->
+  <nav class="bottom-nav">
+    <a href="leaderboard.html" class="nav-item">
+      <img src="img/globe_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="Leaderboard" />
+      <span>Leaderboard</span>
+    </a>
+    <a href="game.html" class="nav-item">
+      <img src="img/lab_panel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="Game" />
+      <span>Game</span>
+    </a>
+    <a href="beranda.html" class="nav-item active">
+      <img src="img/home_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="Beranda" />
+      <span>Beranda</span>
+    </a>
+    <a href="investasi.html" class="nav-item">
+      <img src="img/diamond_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="Investasi" />
+      <span>Investasi</span>
+    </a>
+    <a href="profil.html" class="nav-item">
+      <img src="img/settings_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="Profil" />
+      <span>Profil</span>
+    </a>
+  </nav>
+
+  <script src="beranda.js"></script>
+
+</body>
+</html>
