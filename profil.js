@@ -69,22 +69,28 @@ document.addEventListener("DOMContentLoaded", () => {
   if (logoutAvatar) {
     logoutAvatar.style.visibility = "hidden";
 
-    if (!logoutAvatar.nextElementSibling || !logoutAvatar.nextElementSibling.classList.contains("logout-avatar-initial")) {
-      logoutAvatar.insertAdjacentHTML("afterend", `
-        <div class="logout-avatar-initial" style="
-          position: absolute;
-          right: 8px;
-          width: 28px;
-          height: 28px;
-          border-radius: 50%;
-          background: #ffd700;
-          color: #000;
-          font-size: 14px;
-          font-weight: bold;
-          display: flex;
-          align-items: center;
-          justify-content: center;">${initial}</div>`);
-    }
+    // Hapus jika sudah ada untuk mencegah dobel
+    const oldInitial = logoutAvatar.parentElement.querySelector(".logout-avatar-initial");
+    if (oldInitial) oldInitial.remove();
+
+    // Sisipkan di dalam flexbox supaya rapi
+    const div = document.createElement("div");
+    div.className = "logout-avatar-initial";
+    div.style.cssText = `
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #ffd700;
+      color: #000;
+      font-size: 14px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: auto;
+    `;
+    div.textContent = initial;
+    logoutAvatar.parentElement.appendChild(div);
   }
 
   // Logout
