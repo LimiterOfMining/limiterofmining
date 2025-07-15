@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const path = window.location.pathname.split("/").pop();
 
-  // Nav bawah
+  // Aktifkan nav bawah
   document.querySelectorAll(".nav-item").forEach(link => {
     const href = link.getAttribute("href");
     if (href === path) {
@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const emailEl = document.querySelector(".profile-email");
   const locationEl = document.querySelector(".profile-location");
   const avatarImg = document.querySelector(".profile-avatar");
+  const logoutAvatar = document.querySelector(".account-thumb");
 
   if (nameEl) nameEl.textContent = user.name || "No Name";
   if (idEl) idEl.textContent = `ID: ${user.id || "-"}`;
@@ -41,14 +42,12 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
-  // Inisial huruf pertama sebagai avatar jika tidak ada foto
-  if (avatarImg) {
-    const initial = (user.name?.charAt(0) || "?").toUpperCase();
+  const initial = (user.name?.charAt(0) || "?").toUpperCase();
 
-    // Sembunyikan gambar avatar default
+  // Avatar besar (kartu profil)
+  if (avatarImg) {
     avatarImg.style.visibility = "hidden";
 
-    // cek kalau sudah ada div avatar sebelumnya
     if (!avatarImg.nextElementSibling || !avatarImg.nextElementSibling.classList.contains("avatar-initial")) {
       avatarImg.insertAdjacentHTML("afterend", `
         <div class="avatar-initial" style="
@@ -59,6 +58,28 @@ document.addEventListener("DOMContentLoaded", () => {
           background: #ffd700;
           color: #000;
           font-size: 36px;
+          font-weight: bold;
+          display: flex;
+          align-items: center;
+          justify-content: center;">${initial}</div>`);
+    }
+  }
+
+  // Avatar kecil (logout)
+  if (logoutAvatar) {
+    logoutAvatar.style.visibility = "hidden";
+
+    if (!logoutAvatar.nextElementSibling || !logoutAvatar.nextElementSibling.classList.contains("logout-avatar-initial")) {
+      logoutAvatar.insertAdjacentHTML("afterend", `
+        <div class="logout-avatar-initial" style="
+          position: absolute;
+          right: 16px;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: #ffd700;
+          color: #000;
+          font-size: 14px;
           font-weight: bold;
           display: flex;
           align-items: center;
