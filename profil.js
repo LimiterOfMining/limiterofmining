@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
       logoutAvatar.insertAdjacentHTML("afterend", `
         <div class="logout-avatar-initial" style="
           position: absolute;
-          right: 16px;
+          right: 8px;
           width: 28px;
           height: 28px;
           border-radius: 50%;
