@@ -74,7 +74,7 @@ button:hover { background: #fff6cc; }
   border-radius: 6px;
   display: none;
   font-size: 14px;
-  z-index: 10;
+  z-index: 999;
 }
 </style>
 </head>
@@ -111,8 +111,8 @@ button:hover { background: #fff6cc; }
 <script type="module">
 // ==================== FIREBASE ====================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBDOs780kC2SLvU0OLiFWIL5IxISuZRf_w",
@@ -125,8 +125,14 @@ const firebaseConfig = {
   measurementId: "G-5CYRFYWBZ7"
 };
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getDatabase(app);
+const auth = getAuth(app);
+const dbRef = ref(db);
+
+// ==================== LOGIKA ====================
+window.addEventListener("DOMContentLoaded", () => {
+  fetchCountries();
+});
 
 function generateID() {
   return Math.random().toString(36).substring(2,10).toUpperCase();
@@ -139,19 +145,14 @@ function showNotif(msg) {
   setTimeout(() => notif.style.display = 'none', 3000);
 }
 
-function translateError(code) {
-  switch (code) {
-    case 'auth/invalid-email': return "Email tidak valid.";
-    case 'auth/user-not-found': return "Pengguna tidak ditemukan.";
-    case 'auth/wrong-password': return "Password salah.";
-    case 'auth/email-already-in-use': return "Email sudah digunakan.";
-    case 'auth/weak-password': return "Password terlalu lemah.";
-    default: return "Terjadi kesalahan.";
-  }
-}
-
-function validateEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+function getFriendlyError(error) {
+  const code = (error.code || "").toLowerCase();
+  if (code.includes("invalid-email")) return "Email tidak valid!";
+  if (code.includes("user-not-found")) return "Akun tidak ditemukan!";
+  if (code.includes("wrong-password")) return "Password salah!";
+  if (code.includes("email-already-in-use")) return "Email sudah terdaftar!";
+  if (code.includes("weak-password")) return "Password minimal 6 karakter!";
+  return "Terjadi kesalahan. Coba lagi.";
 }
 
 window.toggleForms = () => {
@@ -170,18 +171,20 @@ window.toggleForms = () => {
 };
 
 // ==================== NEGARA & KOTA ====================
-fetch("https://countriesnow.space/api/v0.1/countries/positions")
-.then(res => res.json())
-.then(data => {
-  const countries = data.data;
-  const select = document.getElementById("regCountry");
-  countries.forEach(c => {
-    const opt = document.createElement("option");
-    opt.value = c.name;
-    opt.textContent = c.name;
-    select.appendChild(opt);
+function fetchCountries() {
+  fetch("https://countriesnow.space/api/v0.1/countries/positions")
+  .then(res => res.json())
+  .then(data => {
+    const countries = data.data;
+    const select = document.getElementById("regCountry");
+    countries.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c.name;
+      opt.textContent = c.name;
+      select.appendChild(opt);
+    });
   });
-});
+}
 
 document.getElementById("regCountry").addEventListener("change", e => {
   const country = e.target.value;
@@ -219,28 +222,15 @@ window.register = () => {
     return;
   }
 
-  if (!validateEmail(email)) {
-    showNotif("Format email salah.");
-    return;
-  }
-
-  if (password.length < 6) {
-    showNotif("Password minimal 6 karakter.");
-    return;
-  }
-
   createUserWithEmailAndPassword(auth, email, password)
-  .then(cred => {
+  .then(() => {
     const id = generateID();
-    const user = { id, name, email, password, country, city };
-    return set(ref(db, `users/${cred.user.uid}`), user).then(() => {
-      showNotif("Registrasi berhasil!");
-      toggleForms();
-    });
+    const user = { id, name, email, country, city };
+    set(ref(db, `users/${btoa(email)}`), user);
+    showNotif("Registrasi berhasil! Silakan login.");
+    toggleForms();
   })
-  .catch(err => {
-    showNotif(translateError(err.code));
-  });
+  .catch(err => showNotif(getFriendlyError(err)));
 };
 
 // ==================== LOGIN ====================
@@ -254,17 +244,19 @@ window.login = () => {
   }
 
   signInWithEmailAndPassword(auth, email, password)
-  .then(cred => {
-    const uid = cred.user.uid;
-    setTimeout(() => {
-      localStorage.setItem("userUid", uid);
-      showNotif("Login sukses!");
-      setTimeout(() => window.location.href = "profil.html", 1000);
-    }, 500);
+  .then(() => {
+    get(child(dbRef, `users/${btoa(email)}`)).then(snap => {
+      if (snap.exists()) {
+        const user = snap.val();
+        localStorage.setItem("user", JSON.stringify(user));
+        showNotif("Login sukses!");
+        setTimeout(() => window.location.href = "profil.html", 1000);
+      } else {
+        showNotif("Data user tidak ditemukan.");
+      }
+    });
   })
-  .catch(err => {
-    showNotif(translateError(err.code));
-  });
+  .catch(err => showNotif(getFriendlyError(err)));
 };
 </script>
 
