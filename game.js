@@ -71,9 +71,12 @@ window.addEventListener("beforeunload", () => {
 function handleCredentialResponse(response) {
   const data = jwt_decode(response.credential);
   currentUser = data;
-  alert(`Selamat datang, ${data.name}`);
-  loginSection.classList.add("hidden");
-  gameSection.classList.remove("hidden");
+
+  // Tampilkan game, sembunyikan login
+  if (loginSection) loginSection.classList.add("hidden");
+  if (gameSection) gameSection.classList.remove("hidden");
+
+  // Load data dari Firebase
   loadData(currentUser);
 }
 
