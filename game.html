@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beranda</title>
+  <link rel="stylesheet" href="game.css" />
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <!-- Google Sign-In + JWT Decode -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+</head>
+<body>
+
+  <!-- LOGIN & GAME WRAPPER -->
+  <div id="login-section" class="hidden">Login section (tidak digunakan untuk saat ini)</div>
+
+<div id="game-section">
+  <!-- TOP CONTAINER -->
+  <div class="top-container">
+    <div class="top-bar">
+      <div class="top-left">
+        <button id="missionBtn" class="btn">
+          <img src="assets/quest-flag-colour-svgrepo-com.svg" class="btn-icon" alt="Misi" />
+          Misi
+        </button>
+      </div>
+
+      <!-- Saldo -->
+<div class="top-center">
+  <div class="balance">
+    <div class="balance-label-box">
+      <img src="img/gold.png" alt="gold" style="width:18px; vertical-align:middle; margin-right:6px;" />
+      Emas:
+    </div>
+    <div class="balance-amount">
+      <span class="money-symbol"></span>
+      <span id="money">🪙 0.0000</span>
+    </div>
+  </div>
+</div>
+
+      <!-- Tombol Toko -->
+      <div class="top-right">
+        <button id="shopBtn" class="btn">
+          <img src="img/gold.png" class="btn-icon" alt="Toko" />
+          Jual Emas
+        </button>
+      </div>
+    </div>
+  </div>
+  
+<!-- === PANEL TOKO (JUAL EMAS) === -->
+<div id="shopPanel" class="popup hidden">
+  <div class="popup-content">
+    <button class="close-popup" onclick="closeShopPanel()">✖</button>
+    <h2>
+      <img src="img/gold.png" alt="Jual Emas" style="width: 24px; vertical-align: middle; margin-right: 6px;" />
+      Jual Emas
+    </h2>
+
+    <div class="exchange-panel">
+      <div class="exchange-left">
+        <p><strong>Saldo Emas:</strong></p>
+        <div class="exchange-box">
+          <img src="img/gold.png" alt="gold" style="width: 20px; vertical-align: middle; margin-right: 4px;" />
+          <span id="goldAmount">0.0000</span>
+        </div>
+
+        <p><strong>Saldo Rupiah:</strong></p>
+        <div class="exchange-box">
+          <img src="img/rupiah.png" alt="rupiah" style="width: 20px; vertical-align: middle; margin-right: 4px;" />
+          <span id="rupiahBalance">Rp 0</span>
+        </div>
+
+        <div class="percentage-buttons">
+          <button onclick="setSellPercentage(10)">10%</button>
+          <button onclick="setSellPercentage(25)">25%</button>
+          <button onclick="setSellPercentage(50)">50%</button>
+          <button onclick="setSellPercentage(75)">75%</button>
+          <button onclick="setSellPercentage(100)">100%</button>
+        </div>
+
+        <p>Jumlah yang akan dijual:</p>
+        <input type="text" id="sellInput" class="sell-input" readonly />
+
+        <div class="equals">=</div>
+        <div class="result-box">
+          <span id="rupiahResult">Rp 0</span>
+        </div>
+
+        <button onclick="confirmSellGold()" class="btn sell-btn">Jual</button>
+
+        <p class="conversion-rate">
+          <img src="img/gold.png" alt="rate" style="width: 16px; vertical-align: middle;" />
+          1 emas = Rp25.000
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  
+  <!-- Grafik + Info -->
+  <div class="chart-container">
+    <canvas id="tapChart" width="300" height="80"></canvas>
+    <div class="chart-overlay">
+      <div class="info-box">
+        <div class="level-text" id="upgradeLevel">Level 1</div>
+        <div class="income-label">Income</div>
+        <div class="income-value" id="income">$ 100 / klik</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tombol Upgrade + Iklan -->
+  <div class="button-row">
+    <button class="ads-button btn" id="boost-btn">
+      <img src="assets/boost-for-reddit-svgrepo-com.svg" class="btn-icon" alt="Boost" />
+      penghasilan<br>60 detik
+    </button>
+
+    <button id="upgrade-button" class="btn">
+      <img src="assets/increase-level-svgrepo-com.svg" class="btn-icon" alt="Upgrade" />
+      Upgrade Penghasilan
+    </button>
+
+    <button class="ads-button btn" id="auto-btn">
+      <img src="assets/click-svgrepo-com.svg" class="btn-icon" alt="Auto Click" />
+      Auto Click<br>60 detik
+    </button>
+  </div>
+
+  <div class="upgrade-cost">💸 Biaya Upgrade: 500</div>
+
+  <!-- Tap Box -->
+  <div class="tap-box" id="tap-box" onclick="handleTap()">
+    <div class="ripple-container"></div>
+    <div class="tap-area">
+      <img src="assets/pick-miner-svgrepo-com.svg" alt="Tap" />
+    </div>
+    <div class="tap-instruction">Tap untuk menambang!</div>
+  </div>
+
+  <p class="tap-instruction">Klik di area ini untuk mendapatkan uang</p>
+</div>
+
+
+    
+<!-- === POPUP MISI BARU === -->
+<div id="missionPopup" class="popup-overlay hidden">
+  <div class="popup-content mission-popup">
+
+    <!-- Judul Tetap -->
+    <div class="popup-header">
+      🎯 Daftar Misi Misi
+    </div>
+
+    <!-- Navigasi Tab -->
+    <div class="mission-tabs">
+      <button class="mission-tab active" data-tab="harian">Misi Harian</button>
+      <button class="mission-tab" data-tab="mingguan">Misi Mingguan</button>
+    </div>
+
+    <!-- Scrollable Misi -->
+    <div class="popup-scroll">
+
+      <!-- === Misi Harian === -->
+      <div class="tab-content" id="tab-harian" style="display: block;">
+
+        <!-- Misi Utama -->
+        <div class="mission-category">
+          <div class="mission-group-title">Misi Utama</div>
+
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/cryptocurrencies.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli total 15 jenis coin crypto apapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/financial-profit.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli total 225 lot saham di saham mana pun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/property.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli total 3 Properti Rumah di negara dimana pun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/factory.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli total 9 usaha berjenis apapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/cryptocurrency.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Mendapatkan untung total $500.000 dari semua coin crypto</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/stock.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Mendapatkan Untung total $200.000 dari semua saham</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/assets.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">mendapatkan untung total $50.000 dari semua properti</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/money-bag.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">mendapatkan untung total $20.000 dari semua usaha</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi3/sell.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Jual total 20 Lot Saham, di saham manapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/property.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli total 40 fasilitas rumah, di negara manapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/maintenance.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Upgrade total 20 fasilitas di usaha manapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/share.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Bagikan 5 game ini kepada teman mu</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+
+          
+        </div> <!-- Batas misi harian -->
+
+        
+        <!-- Misi Coin Crypto -->
+        <div class="mission-category">
+          <div class="mission-group-title">Misi Coin Crypto</div>
+
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/bitcoin.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 0.00001000 Coin Bitcoin</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/ethereum.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 0.00003974 Coin Ethereum</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/dogecoin.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 6.08883611 Coin Doge</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/litecoin-ltc-logo.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 0.01146000 Coin Lite</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/tron.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 3.52266482 Coin Tron</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/usd-coin-usdc-logo.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 1.00006700 Coin USDC</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/bnb-bnb-logo.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 0.00152480 Coin BNB</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/solana.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 0.00678886 Coin Solana</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/ton.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 0.36630036 Coin TON</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/monero.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 0.00317107 Coin Monero</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/pepe-pepe-logo.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 103305.785 Coin Pepe</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/shiba-inu.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 87565.6742 Coin Shiba Inu</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/digibyte-dgb-logo.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 132.240148 Coin Digibyte</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/bonk1-bonk-logo.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 50505.0505 Coin Bonk</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi2/floki-inu-floki-logo.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 13306.7198 Coin Floki</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+        </div> <!-- Batas katagori Crypto -->
+
+      
+        <!-- Misi Saham -->
+        <div class="mission-category">
+          <div class="mission-group-title">Misi Saham</div>
+
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi3/market.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Hasilkan $10.000 dari semua saham</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi3/market.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Hasilkan $35.000 dari semua saham</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi3/market.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Hasilkan $100.000 dari semua saham</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi3/stock.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 15 Lot saham berjenis apapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi3/stock.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 60 Lot saham berjenis apapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi3/stock.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 150 Lot saham berjenis apapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi3/sell.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Jual 10 Lot Saham yang kamu punya, berjenis apapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi3/sell.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Jual 20 Lot Saham yang kamu punya, berjenis apapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi3/sell.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Jual 40 Lot Saham yang kamu punya, berjenis apapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/open-door.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">mengunjungi halaman saham</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+   
+
+        </div> <!-- Batas Katagori Saham -->
+      
+      
+        <!-- Misi Properti -->
+        <div class="mission-category">
+          <div class="mission-group-title">Misi Properti</div>
+
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi4/buy-a-house.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Hasilkan $10.000 dari properti Rumah</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi4/buy-a-house.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Hasilkan $35.000 dari properti Rumah</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi4/buy-a-house.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Hasilkan $100.000 dari properti Rumah</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi4/skyscraper.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli dan tambahkan 5 fasilitas rumah</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi4/skyscraper.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli dan tambahkan 15 fasilitas rumah</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi4/skyscraper.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli dan tambahkan 20 fasilitas rumah</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi4/loan.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 1 Rumah di negara mana pun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi4/loan.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 2 Rumah di negara mana pun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi4/loan.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 3 Rumah di negara mana pun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/open-door.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">mengunjungi halaman Toko Properti</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+
+        </div> <!-- Batas Katagori Properti -->
+      
+      
+        <!-- Misi perusahaan -->
+        <div class="mission-category">
+          <div class="mission-group-title">Misi Perusahaan</div>
+
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/money-bag.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Hasilkan total $20.000 dari Perusahaan yang kamu punya</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/money-bag.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Hasilkan total $75.000 Dari Perusahaan yang kamu punya</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/money-bag.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Hasilkan total $200.000 dari Perusahaan yang kamu punya</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi5/upgrade.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Upgrade total 3 fasilitas Perusahaan yang kamu punya</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi5/upgrade.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Upgrade total 10 fasilitas Perusahaan yang kamu punya</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi5/upgrade.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Upgrade total 20 fasilitas Perusahaan yang kamu punya</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi5/shopping-online.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 1 Perusahaan berjenis apapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi5/shopping-online.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 3 Perusahaan berjenis apapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi5/shopping-online.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 5 Perusahaan berjenis apapun</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/open-door.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Kunjungi kantor Toko perusahaan</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+
+        </div> <!-- Batas Katagori USAHA -->
+
+      </div> <!-- Batas Misi Harian -->
+      
+
+      <!-- === Misi Mingguan === -->
+      <div class="tab-content" id="tab-mingguan" style="display: none;">
+                <!-- Isi Misi mingguan -->
+        <div class="mission-category">
+          <div class="mission-group-title">Akumulasi</div>
+
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/minggu1/timetable.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Login dan klaim reward selama 7 hari berturut-turut tanpa mis 1 hari</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/minggu1/goal.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Selesaikan minimal 5 misi harian per hari selama 7 hari</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/minggu1/hourglass.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Aktif bermain minimal 3 jam per hari selama 7 hari</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/minggu1/startup.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">mendapatkan booster penghasilan 60 detik, 3 kali menonton iklan per hari selama 7 hari</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/minggu1/smartphone.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">mendapatkan auto click selama 60 detik, 3 kali menonton iklan per hari selama 7 hari</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/minggu1/online-business.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Lakukan 300 transaksi apapun selama 7 hari</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/minggu1/click.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Lakukan 30.000 tap selama 7 hari</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi4/loan.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli properti di 20 negara berbeda dalam 7 hari</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi1/cryptocurrency.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 20 jenis coin crypto berbeda di market selama 7 hari</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi3/market.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Beli 20 jenis saham berbeda di bursa selama 7 hari </div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+
+          <div class="mission-item">
+            <div class="mission-info">
+              <img src="img/beranda/misi5/requisition.png" class="mission-icon" alt="Icon" />
+              <div class="mission-text-wrapper">
+                <div class="mission-title">Buka 10 jenis usaha berbeda di agen selama 7 hari</div>
+                <div class="mission-progress">
+                  <div class="mission-progress-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-claim">Claim</div>
+          </div>
+          
+          
+      </div> <!-- Jika menambahkan misi buat di atas div ini -->
+     </div> <!-- Batas Akhir Misi mingguan -->
+
+    </div> <!-- END popup-scroll -->
+    <button class="close-popup" onclick="closeMissionPopup()">✖</button>
+  </div> <!-- END popup-content -->
+</div> <!-- END popup-overlay -->
+    
+    <!-- Tombol Tutup -->
+    <button class="close-popup" onclick="closeMissionPopup()">✖</button>
+  </div>
+</div>
+
+  <!-- Navigasi bawah -->
+  <nav class="bottom-nav">
+    <a href="leaderboard.html" class="nav-item">
+      <img src="img/globe_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="Leaderboard" />
+      <span>Leaderboard</span>
+    </a>
+    <a href="game.html" class="nav-item active">
+      <img src="img/lab_panel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="Beranda" />
+      <span>Game</span>
+    </a>
+    <a href="beranda.html" class="nav-item">
+      <img src="img/home_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="Perusahaan" />
+      <span>Beranda</span>
+    </a>
+    <a href="investasi.html" class="nav-item">
+      <img src="img/diamond_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="Investasi" />
+      <span>Investasi</span>
+    </a>
+    <a href="profil.html" class="nav-item">
+      <img src="img/settings_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="Profil" />
+      <span>Profil</span>
+    </a>
+  </nav>
+
+  <!-- SCRIPTS -->
+  <script src="game.js"></script>
+  <script src="chart.js"></script>
+</body>
+
+</html>
