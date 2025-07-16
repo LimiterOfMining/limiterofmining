@@ -1,89 +1,98 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login / Register</title>
-<style>
-body {
-  margin: 0;
-  background: linear-gradient(135deg, #1e1e1e, #3a2a1d);
-  color: #fff;
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
-}
-.container {
-  background: #2e2e2e;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(255,215,0,0.5);
-  width: 340px;
-  position: relative;
-}
-h2 { text-align: center; color: #ffd700; }
-form {
-  overflow: hidden;
-  max-height: 500px;
-  transition: all 0.5s ease;
-  opacity: 1;
-}
-form.hidden {
-  max-height: 0;
-  opacity: 0;
-  margin: 0;
-  padding: 0;
-}
-input, select {
-  width: 100%;
-  margin: 8px 0;
-  padding: 8px;
-  border: none;
-  border-radius: 6px;
-}
-button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  background: #ffd700;
-  color: #000;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-button:hover { background: #fff6cc; }
-.toggle {
-  text-align: center;
-  margin-top: 10px;
-  cursor: pointer;
-  color: #ffd700;
-  text-decoration: underline;
-}
-.notif {
-  position: absolute;
-  top: -40px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #ff5555;
-  color: #fff;
-  padding: 8px 12px;
-  border-radius: 6px;
-  display: none;
-  font-size: 14px;
-  z-index: 999;
-}
-</style>
-</head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login / Register</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #1e1e1e, #3a2a1d);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .container {
+      background: #2e2e2e;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(255,215,0,0.5);
+      width: 340px;
+      position: relative;
+    }
+    h2 { text-align: center; color: #ffd700; }
+    form {
+      overflow: hidden;
+      max-height: 500px;
+      transition: all 0.5s ease;
+      opacity: 1;
+    }
+    form.hidden {
+      max-height: 0;
+      opacity: 0;
+      margin: 0;
+      padding: 0;
+    }
+    input, select {
+      width: 100%;
+      margin: 8px 0;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: #ffd700;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover { background: #fff6cc; }
+    .toggle {
+      text-align: center;
+      margin-top: 10px;
+      cursor: pointer;
+      color: #ffd700;
+      text-decoration: underline;
+    }
+    .notif {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ff5555;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      display: none;
+      font-size: 14px;
+      z-index: 999;
+    }
+  </style>
 
+  <!-- Google One Tap -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
 <body>
 
+<!-- GOOGLE ONE TAP -->
+<div id="g_id_onload"
+     data-client_id="214703140470-6t2qfe8mv6bejcidkk0as7p024qjuoqi.apps.googleusercontent.com"
+     data-callback="handleCredentialResponse"
+     data-auto_prompt="true">
+</div>
+
+<!-- FORM WRAPPER -->
 <div class="container">
   <h2>Login / Register</h2>
-
   <div id="notif" class="notif"></div>
 
   <form id="loginForm">
@@ -96,23 +105,19 @@ button:hover { background: #fff6cc; }
     <input type="text" id="regName" placeholder="Nama">
     <input type="email" id="regEmail" placeholder="Email">
     <input type="password" id="regPassword" placeholder="Password">
-    <select id="regCountry">
-      <option value="">Pilih Negara</option>
-    </select>
-    <select id="regCity">
-      <option value="">Pilih Kota</option>
-    </select>
+    <select id="regCountry"><option value="">Pilih Negara</option></select>
+    <select id="regCity"><option value="">Pilih Kota</option></select>
     <button type="button" onclick="register()">Register</button>
   </form>
 
   <div class="toggle" onclick="toggleForms()">Belum punya akun? Register</div>
 </div>
 
+<!-- FIREBASE + SCRIPT -->
 <script type="module">
-// ==================== FIREBASE ====================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithCredential, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBDOs780kC2SLvU0OLiFWIL5IxISuZRf_w",
@@ -126,25 +131,19 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const auth = getAuth(app);
 const dbRef = ref(db);
+const auth = getAuth(app);
 
-// ==================== LOGIKA ====================
-window.addEventListener("DOMContentLoaded", () => {
-  fetchCountries();
-});
-
+// === HELPERS ===
 function generateID() {
   return Math.random().toString(36).substring(2,10).toUpperCase();
 }
-
 function showNotif(msg) {
   const notif = document.getElementById('notif');
   notif.textContent = msg;
   notif.style.display = 'block';
   setTimeout(() => notif.style.display = 'none', 3000);
 }
-
 function getFriendlyError(error) {
   const code = (error.code || "").toLowerCase();
   if (code.includes("invalid-email")) return "Email tidak valid!";
@@ -155,6 +154,7 @@ function getFriendlyError(error) {
   return "Terjadi kesalahan. Coba lagi.";
 }
 
+// === TOGGLE FORM LOGIN/REGISTER ===
 window.toggleForms = () => {
   const loginForm = document.getElementById('loginForm');
   const registerForm = document.getElementById('registerForm');
@@ -170,46 +170,7 @@ window.toggleForms = () => {
   }
 };
 
-// ==================== NEGARA & KOTA ====================
-function fetchCountries() {
-  fetch("https://countriesnow.space/api/v0.1/countries/positions")
-  .then(res => res.json())
-  .then(data => {
-    const countries = data.data;
-    const select = document.getElementById("regCountry");
-    countries.forEach(c => {
-      const opt = document.createElement("option");
-      opt.value = c.name;
-      opt.textContent = c.name;
-      select.appendChild(opt);
-    });
-  });
-}
-
-document.getElementById("regCountry").addEventListener("change", e => {
-  const country = e.target.value;
-  const citySelect = document.getElementById("regCity");
-  citySelect.innerHTML = `<option value="">Loading...</option>`;
-
-  fetch("https://countriesnow.space/api/v0.1/countries/cities", {
-    method: "POST",
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({country})
-  })
-  .then(res => res.json())
-  .then(data => {
-    const cities = data.data;
-    citySelect.innerHTML = `<option value="">Pilih Kota</option>`;
-    cities.forEach(city => {
-      const opt = document.createElement("option");
-      opt.value = city;
-      opt.textContent = city;
-      citySelect.appendChild(opt);
-    });
-  });
-});
-
-// ==================== REGISTER ====================
+// === REGISTER ===
 window.register = () => {
   const name = document.getElementById('regName').value.trim();
   const email = document.getElementById('regEmail').value.trim();
@@ -233,7 +194,7 @@ window.register = () => {
   .catch(err => showNotif(getFriendlyError(err)));
 };
 
-// ==================== LOGIN ====================
+// === LOGIN ===
 window.login = () => {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value.trim();
@@ -249,8 +210,7 @@ window.login = () => {
       if (snap.exists()) {
         const user = snap.val();
         localStorage.setItem("user", JSON.stringify(user));
-        showNotif("Login sukses!");
-        setTimeout(() => window.location.href = "profil.html", 1000);
+        window.location.href = "game.html";
       } else {
         showNotif("Data user tidak ditemukan.");
       }
@@ -258,6 +218,77 @@ window.login = () => {
   })
   .catch(err => showNotif(getFriendlyError(err)));
 };
+
+// === GOOGLE ONE TAP LOGIN ===
+window.handleCredentialResponse = (response) => {
+  const credential = GoogleAuthProvider.credential(response.credential);
+  signInWithCredential(auth, credential)
+    .then((result) => {
+      const user = result.user;
+      const emailEncoded = btoa(user.email);
+
+      get(child(dbRef, `users/${emailEncoded}`)).then((snap) => {
+        if (!snap.exists()) {
+          const userData = {
+            id: user.uid,
+            name: user.displayName || "User",
+            email: user.email,
+            country: "",
+            city: ""
+          };
+          set(ref(db, `users/${emailEncoded}`), userData);
+        }
+
+        localStorage.setItem("user", JSON.stringify({
+          id: user.uid,
+          name: user.displayName || "User",
+          email: user.email
+        }));
+
+        window.location.href = "game.html";
+      });
+    })
+    .catch(err => {
+      alert("Login Google gagal: " + err.message);
+    });
+};
+
+// === NEGARA & KOTA ===
+function fetchCountries() {
+  fetch("https://countriesnow.space/api/v0.1/countries/positions")
+  .then(res => res.json())
+  .then(data => {
+    const select = document.getElementById("regCountry");
+    data.data.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c.name;
+      opt.textContent = c.name;
+      select.appendChild(opt);
+    });
+  });
+}
+document.getElementById("regCountry").addEventListener("change", e => {
+  const country = e.target.value;
+  const citySelect = document.getElementById("regCity");
+  citySelect.innerHTML = `<option value="">Loading...</option>`;
+
+  fetch("https://countriesnow.space/api/v0.1/countries/cities", {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ country })
+  })
+  .then(res => res.json())
+  .then(data => {
+    citySelect.innerHTML = `<option value="">Pilih Kota</option>`;
+    data.data.forEach(city => {
+      const opt = document.createElement("option");
+      opt.value = city;
+      opt.textContent = city;
+      citySelect.appendChild(opt);
+    });
+  });
+});
+fetchCountries();
 </script>
 
 </body>
