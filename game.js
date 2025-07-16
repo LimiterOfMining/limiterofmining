@@ -4,7 +4,7 @@ const firebaseConfig = {
   authDomain: "limit-of-trading-inc.firebaseapp.com",
   databaseURL: "https://limit-of-trading-inc-default-rtdb.firebaseio.com",
   projectId: "limit-of-trading-inc",
-  storageBucket: "limit-of-trading-inc.firebasestorage.app",
+  storageBucket: "limit-of-trading-inc.appspot.com",
   messagingSenderId: "1029104864288",
   appId: "1:1029104864288:web:d1ebe56e80b8b11fa78045",
   measurementId: "G-5CYRFYWBZ7"
@@ -34,7 +34,6 @@ function updateUI() {
   if (moneyDisplay) moneyDisplay.textContent = `🪙 ${money.toFixed(4)}`;
   if (incomeDisplay) incomeDisplay.textContent = `🪙 0.0001 / Tap`;
   if (upgradeCostDisplay) upgradeCostDisplay.textContent = upgradeCost.toLocaleString();
-
   const rupiahBalance = document.getElementById("rupiahBalance");
   if (rupiahBalance) rupiahBalance.textContent = "Rp " + rupiah.toLocaleString();
 }
@@ -63,6 +62,7 @@ function loadData(user) {
   });
 }
 
+// --- Simpan otomatis sebelum keluar halaman ---
 window.addEventListener("beforeunload", () => {
   saveData();
 });
@@ -71,12 +71,8 @@ window.addEventListener("beforeunload", () => {
 function handleCredentialResponse(response) {
   const data = jwt_decode(response.credential);
   currentUser = data;
-
-  // Tampilkan game, sembunyikan login
   if (loginSection) loginSection.classList.add("hidden");
   if (gameSection) gameSection.classList.remove("hidden");
-
-  // Load data dari Firebase
   loadData(currentUser);
 }
 
