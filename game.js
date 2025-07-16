@@ -77,10 +77,6 @@ function handleCredentialResponse(response) {
   loadData(currentUser);
 }
 
-// --- BYPASS LOGIN (sementara) ---
-if (gameSection) gameSection.classList.remove("hidden");
-updateUI();
-
 // --- Ripple Effect ---
 function createRipple(x, y) {
   const rippleContainer = tapBox.querySelector(".ripple-container");
